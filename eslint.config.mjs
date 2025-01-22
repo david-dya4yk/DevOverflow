@@ -1,16 +1,98 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+// import path from "node:path";
+// import { fileURLToPath } from "node:url";
+// import js from "@eslint/js";
+// import { FlatCompat } from "@eslint/eslintrc";
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+// const compat = new FlatCompat({
+//   baseDirectory: __dirname,
+//   recommendedConfig: js.configs.recommended,
+//   allConfig: js.configs.all,
+// });
+
+// export default [
+//   ...compat.extends(
+//     "next/core-web-vitals",
+//     "next/typescript",
+//     "standard",
+//     "plugin:tailwindcss/recommended",
+//     "prettier"
+//   ),
+//   {
+//     plugins: ["tailwindcss"],
+//     rules: {
+//       "no-undef": "off",
+//       "tailwindcss/classnames-order": "warn",
+//       "tailwindcss/no-custom-classname": "off",
+//     },
+//     languageOptions: {
+//       ecmaVersion: 2021,
+//       sourceType: "module",
+//     },
+//     env: {
+//       browser: true,
+//       node: true,
+//       es6: true,
+//     },
+//   },
+// ];
+// 
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { FlatCompat } from "@eslint/eslintrc";
+import js from "@eslint/js";
+import eslintPluginImport from "eslint-plugin-import"; // Імпортуємо плагін
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = path.dirname(__filename);
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
+  recommendedConfig: js.configs.recommended,
+  allConfig: js.configs.all,
 });
 
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+export default [
+  ...compat.extends([
+    "next/core-web-vitals",
+    "next/typescript",
+    "standard",
+    "plugin:tailwindcss/recommended",
+    "prettier"
+  ]),
+  {
+    plugins: {
+      import: eslintPluginImport, // Вказуємо плагін як об'єкт
+    },
+    rules: {
+      "import/order": [
+        "error",
+        {
+          groups: [
+            "builtin", // Built-in types are first
+            "external", // External libraries
+            "internal", // Internal modules
+            ["parent", "sibling"], // Parent and sibling types can be mingled together
+            "index", // Then the index file
+            "object", // Object imports
+          ],
+          "newlines-between": "always",
+          alphabetize: {
+            order: "asc",
+            caseInsensitive: true,
+          },
+        },
+      ],
+    },
+    ignores: ["components/ui/**"], // Використовуємо "ignores" замість "ignorePatterns"
+  },
+  {
+    files: ["*.ts", "*.tsx"], // Файли TypeScript
+    rules: {
+      "no-undef": "off", // Disable no-undef for TypeScript files
+    },
+  },
 ];
-
-export default eslintConfig;
