@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
-import eslintPluginImport from "eslint-plugin-import"; // Імпортуємо плагін
+import eslintPluginImport from "eslint-plugin-import";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,23 +20,23 @@ export default [
     "next/typescript",
     "standard",
     "plugin:tailwindcss/recommended",
-    "prettier"
+    "prettier",
   ]),
   {
     plugins: {
-      import: eslintPluginImport, // Вказуємо плагін як об'єкт
+      import: eslintPluginImport,
     },
     rules: {
       "import/order": [
         "error",
         {
           groups: [
-            "builtin", // Built-in types are first
-            "external", // External libraries
-            "internal", // Internal modules
-            ["parent", "sibling"], // Parent and sibling types can be mingled together
-            "index", // Then the index file
-            "object", // Object imports
+            "builtin",
+            "external",
+            "internal",
+            ["parent", "sibling"],
+            "index",
+            "object",
           ],
           "newlines-between": "always",
           alphabetize: {
@@ -46,12 +46,14 @@ export default [
         },
       ],
     },
-    ignores: ["components/ui/**"], // Використовуємо "ignores" замість "ignorePatterns"
-  },
-  {
-    files: ["*.ts", "*.tsx"], // Файли TypeScript
-    rules: {
-      "no-undef": "off", // Disable no-undef for TypeScript files
-    },
+    ignores: ["components/ui/**"],
+    overrides: [
+      {
+        files: ["*.ts", "*.tsx"],
+        rules: {
+          "no-undef": "off",
+        },
+      },
+    ],
   },
 ];

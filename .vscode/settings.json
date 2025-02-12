@@ -32,6 +32,10 @@
     "**/.next": true,
     "README.md": true,
     "**/.gitignore": true,
-    "next-env.d.ts": true
+    "next-env.d.ts": true,
+    ".env.local": true,
+    "middlewere.ts": true,
+    "postcss.config.mjs": true,
+    "components.json": true
   }
 }
