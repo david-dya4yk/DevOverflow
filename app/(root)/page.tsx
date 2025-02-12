@@ -1,7 +1,8 @@
+import QuestionCard from "@/components/cards/QuestionCard";
+import ROUTES from "@/constants/routes";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
-import ROUTES from "@/constants/routes";
 import Link from "next/link";
 
 const questions = [
@@ -13,7 +14,12 @@ const questions = [
       { _id: "1", name: "react" },
       { _id: "2", name: "JavaScript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: {
+      _id: "1",
+      name: "John Doe",
+      imgUrl:
+        "https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D",
+    },
     upvotes: 10,
     answers: 5,
     views: 100,
@@ -24,7 +30,12 @@ const questions = [
     title: "How to learn JavaScript?",
     description: "I want to learn JavaScript, can anyone help me?",
     tags: [{ _id: "1", name: "JavaScript" }],
-    author: { _id: "1", name: "John Doe" },
+    author: {
+      _id: "1",
+      name: "John Doe",
+      imgUrl:
+        "https://plus.unsplash.com/premium_photo-1683121366070-5ceb7e007a97?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D",
+    },
     upvotes: 10,
     answers: 5,
     views: 100,
@@ -70,7 +81,7 @@ const Home = async ({ searchParams }: SearchParams) => {
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
-          <h3 key={question._id}>{question.title}</h3>
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
     </>
