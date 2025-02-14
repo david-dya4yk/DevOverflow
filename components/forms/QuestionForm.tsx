@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { AskQuestionSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,11 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import TagCard from "../cards/TagCard";
 import { z } from "zod";
+import dynamic from "next/dynamic";
+import { MDXEditorMethods } from "@mdxeditor/editor";
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+});
 
 const QuestionForm = () => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
@@ -67,6 +72,7 @@ const QuestionForm = () => {
       });
     }
   };
+  const editorRef = useRef<MDXEditorMethods>(null);
 
   const handleCreateQuestion = () => {};
 
@@ -102,14 +108,20 @@ const QuestionForm = () => {
         />
         <FormField
           control={form.control}
-          name="title"
+          name="content"
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Detailed explanation of your problem?
                 <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl></FormControl>
+              <FormControl>
+                <Editor
+                  fieldChange={field.onChange}
+                  value={field.value}
+                  editorRef={editorRef}
+                />
+              </FormControl>
               <FormDescription className="body-regular text-light-500 mt-2.5">
                 Introduce the problem and expand on what you put in the title.
               </FormDescription>
