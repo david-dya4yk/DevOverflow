@@ -37,5 +37,6 @@
     "middlewere.ts": true,
     "postcss.config.mjs": true,
     "components.json": true
-  }
+  },
+  "cSpell.ignoreWords": ["mdxeditor"]
 }
