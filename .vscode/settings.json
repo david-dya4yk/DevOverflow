@@ -37,6 +37,6 @@
     "postcss.config.mjs": true,
     "components.json": true
   },
-  "cSpell.ignoreWords": ["mdxeditor"],
+  "cSpell.ignoreWords": ["answears", "downvotes", "mdxeditor", "upvotes"],
   "cSpell.words": ["Accaunt"]
 }
