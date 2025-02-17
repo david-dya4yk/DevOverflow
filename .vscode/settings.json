@@ -33,10 +33,10 @@
     "README.md": true,
     "**/.gitignore": true,
     "next-env.d.ts": true,
-    ".env.local": true,
     "middlewere.ts": true,
     "postcss.config.mjs": true,
     "components.json": true
   },
-  "cSpell.ignoreWords": ["mdxeditor"]
+  "cSpell.ignoreWords": ["answears", "downvotes", "mdxeditor", "upvotes"],
+  "cSpell.words": ["Accaunt"]
 }
