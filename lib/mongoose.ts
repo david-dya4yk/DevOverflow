@@ -1,5 +1,6 @@
 // import { error } from "console";
 import mongoose, { Mongoose } from "mongoose";
+import logger from "./logger";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
@@ -24,6 +25,7 @@ if (!cached) {
 
 const dbConnect = async (): Promise<Mongoose> => {
   if (cached.conn) {
+    logger.info("Using existing mongoose connection");
     return cached.conn;
   }
 
@@ -31,11 +33,11 @@ const dbConnect = async (): Promise<Mongoose> => {
     cached.promise = mongoose
       .connect(MONGODB_URI, { dbName: "DevF" })
       .then((result) => {
-        console.log("result", result);
+        logger.info("Connect to MongoDb");
         return result;
       })
       .catch((error) => {
-        console.log("Error conecting ot MongoDb", error);
+        logger.error("Error conecting ot MongoDb");
         throw error;
       });
   }
