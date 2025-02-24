@@ -38,5 +38,11 @@
     "components.json": true
   },
   "cSpell.ignoreWords": ["answears", "downvotes", "mdxeditor", "upvotes"],
-  "cSpell.words": ["Accaunt"]
+  "cSpell.words": ["Accaunt"],
+  "mdb.presetConnections": [
+    {
+      "name": "Preset Connection",
+      "connectionString": "mongodb://localhost:27017"
+    }
+  ]
 }
