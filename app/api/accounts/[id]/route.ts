@@ -3,7 +3,6 @@ import handleError from "@/lib/handlers/error";
 import { NotFoundError, ValidationError } from "@/lib/http-error";
 import dbConnect from "@/lib/mongoose";
 import { AccountSchema, UserSchema } from "@/lib/validations";
-import { User } from "lucide-react";
 import { NextResponse } from "next/server";
 
 export async function GET(

@@ -23,11 +23,11 @@ interface Question {
 type ActionResponse<T = null> = {
   success: boolean;
   data?: T;
-  error: {
+  error?: {
     message: string;
     details: Record<string, string[]>;
   };
-  status: number;
+  status?: number;
 };
 
 type SuccessResponse<T = null> = ActionResponse<T> & { success: true };

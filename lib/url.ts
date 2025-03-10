@@ -13,10 +13,6 @@ interface RemoveUrlQueryParams {
 
 export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
   const queryString = qs.parse(params);
-  //   console.log("queryString", queryString);
-  //   console.log("params", params);
-  //   console.log("key", key);
-  //   console.log("window.location.pathname", window.location.pathname);
 
   queryString[key] = value;
 
