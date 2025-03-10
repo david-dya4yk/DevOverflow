@@ -23,11 +23,6 @@ const LocalSearch = ({ route, imgSrc, placeholder, otherClasses }: Props) => {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
-        console.log("pathname", pathname);
-        console.log("route", route);
-        //   console.log("searchParams", searchParams);
-        //   console.log("query", query);
-        console.log("searchQuery", searchQuery);
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
           key: "query",
