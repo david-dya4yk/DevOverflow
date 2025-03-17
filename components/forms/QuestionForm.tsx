@@ -17,10 +17,10 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import TagCard from "../cards/TagCard";
-import { z } from "zod";
+import { number, z } from "zod";
 import dynamic from "next/dynamic";
 import { MDXEditorMethods } from "@mdxeditor/editor";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import ROUTES from "@/constants/routes";
@@ -28,16 +28,20 @@ const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Props {
+  question?: Question;
+  isEdit?: boolean;
+}
+const QuestionForm = ({ question, isEdit = false }: Props) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -86,9 +90,29 @@ const QuestionForm = () => {
     data: z.infer<typeof AskQuestionSchema>
   ) => {
     startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question._id,
+          ...data,
+        });
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "Question updated successfully.",
+          });
+
+          if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
+        } else {
+          toast({
+            title: `Error ${result.status}`,
+            description: result.error?.message || "Something went wrong",
+            variant: "destructive",
+          });
+        }
+        return;
+      }
       const result = await createQuestion(data);
-      // console.log("data", data);
-      console.log("result", result);
+
       if (result.success) {
         toast({
           title: "Success",
@@ -178,9 +202,9 @@ const QuestionForm = () => {
                   />
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 flex-wrap gap-2.5">
-                      {field.value.map((tag: string) => (
+                      {field.value.map((tag: string, index: number) => (
                         <TagCard
-                          key={tag}
+                          key={index}
                           _id={tag}
                           name={tag}
                           compact
@@ -213,7 +237,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              <>Ask a Question</>
+              <>{isEdit ? "Edit:" : "Ask a Question"}</>
             )}
           </Button>
         </div>

@@ -7,14 +7,15 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const getDeviconClassName = (techName: string) => {
-  const normalizeTechName = techName.replace(/[ .]/g, "").toLowerCase();
+  const normalizeTechName = techName?.replace(/[ .]/g, "").toLowerCase();
 
   return techMap[normalizeTechName]
     ? `${techMap[normalizeTechName]} colored`
     : "devicon-devicon-plain";
 };
 
-export const getTimeStamp = (date: string): string => {
+export const getTimeStamp = (createdAt: Date): string => {
+  const date = new Date(createdAt);
   const now = new Date();
   const past = new Date(date);
   const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);

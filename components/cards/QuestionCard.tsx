@@ -17,7 +17,7 @@ const QuestionCard = ({
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
           <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
-            {getTimeStamp(String(createdAt))}
+            {getTimeStamp(createdAt)}
           </span>
           <Link
             className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1"
@@ -36,10 +36,10 @@ const QuestionCard = ({
       </div>
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
-          imgUrl={author.imgUrl}
+          imgUrl={author.image}
           value={author.name}
           alt={author.name}
-          title={`asked ${getTimeStamp(String(createdAt))}`}
+          title={`asked ${getTimeStamp(createdAt)}`}
           href={ROUTES.PROFILE(author._id)}
           textStyles="body-medium text-dark400_light700"
           isAuthor

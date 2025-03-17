@@ -91,7 +91,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           account.provider.slice(1)) as "github" | "google",
         providerAccountId: account.providerAccountId,
       })) as ActionResponse;
-      console.log("account.provider :", account.provider);
 
       if (!success) return false;
 
