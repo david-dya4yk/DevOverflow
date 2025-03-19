@@ -76,6 +76,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, profile, account }) {
       if (account?.type === "credentials") return true;
       if (!user || !account) return false;
+
+      const { data: existingAccount } = (await api.accounts.getByProvider(
+        account.providerAccountId
+      )) as ActionResponse<IAccountDoc>;
+
+      // Якщо акаунт вже є, не створюємо новий
+      if (existingAccount) return true;
+
       const userInfo = {
         name: user.name!,
         email: user.email! ?? profile?.email ?? "",
@@ -85,6 +93,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             ? (profile?.login as string)
             : (user.name as string),
       };
+
       const { success } = (await api.auth.oAuthSignIn({
         user: userInfo,
         provider: (account.provider.charAt(0).toUpperCase() +

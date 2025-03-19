@@ -17,22 +17,12 @@ const Home = async ({ searchParams }: SearchParams) => {
 
   const { success, data, error } = await getQuestions({
     page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
+    pageSize: Number(pageSize) || 15,
     query: query || "",
     filter: filter || "",
   });
 
   const { questions } = data || {};
-
-  // const filteredQuestions = questions.filter((question) => {
-  //   const matchesQuery = question.title
-  //     .toLowerCase()
-  //     .includes(query.toLowerCase());
-  //   const matchesFilter = filter
-  //     ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
-  //     : true;
-  //   return matchesQuery && matchesFilter;
-  // });
 
   return (
     <>
@@ -45,7 +35,7 @@ const Home = async ({ searchParams }: SearchParams) => {
           <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
         </Button>
       </section>
-      <section>
+      <section className="mt-11">
         <LocalSearch
           route="/"
           imgSrc="/icons/search.svg"
