@@ -10,6 +10,7 @@ export async function POST(request: Request) {
 
   try {
     await dbConnect();
+
     const validatedData = AccountSchema.partial().safeParse({
       providerAccountId,
     });

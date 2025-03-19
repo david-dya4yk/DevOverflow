@@ -31,12 +31,14 @@ export async function POST(request: Request) {
       provider: validatedData.provider,
       providerAccountId: validatedData.providerAccountId,
     });
+
     if (existingAccount)
       throw new ForbiddenError(
         "An account with the same provider already exists"
       );
 
     const newAccount = await Account.create(validatedData);
+
     return NextResponse.json(
       { success: true, data: newAccount },
       { status: 201 }

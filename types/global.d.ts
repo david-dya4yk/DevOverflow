@@ -43,7 +43,7 @@ interface RouteParams {
 
 interface PaginatedSearchParams {
   page?: number;
-  pageSize: number;
+  pageSize?: number;
   query?: string;
   filter?: string;
   sort?: string;

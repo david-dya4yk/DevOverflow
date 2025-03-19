@@ -112,6 +112,7 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
         return;
       }
       const result = await createQuestion(data);
+      console.log("result", result);
 
       if (result.success) {
         toast({
