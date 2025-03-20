@@ -3,15 +3,27 @@ import Preview from "@/components/editor/Preview";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import React from "react";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
   const { success, data: question } = await getQuestion({ questionId: id });
+
+  after(async () => {
+    await incrementViews({ questionId: id });
+  });
+
+  // TODO:Approach 1
+  // const [_, { success, data: question }] = await Promise.all([
+  //   await incrementViews({ questionId: id }),
+  // await getQuestion({ questionId: id });
+  // ]);
+
   if (!success || !question) return redirect("/404");
 
   const { author, createdAt, views, tags, answers, title, content } = question;
