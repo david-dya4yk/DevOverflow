@@ -15,18 +15,19 @@ const compat = new FlatCompat({
 });
 
 export default [
-  ...compat.extends([
-    "next/core-web-vitals",
-    "next/typescript",
-    "standard",
-    "plugin:tailwindcss/recommended",
-    "prettier",
-  ]),
+  // ...compat.extends([
+  //   "next/core-web-vitals",
+  //   "next/typescript",
+  //   "standard",
+  //   "plugin:tailwindcss/recommended",
+  //   "prettier",
+  // ]),
   {
     plugins: {
       import: eslintPluginImport,
     },
     rules: {
+      "curly": "error",
       "import/order": [
         "error",
         {
@@ -47,13 +48,13 @@ export default [
       ],
     },
     ignores: ["components/ui/**"],
-    overrides: [
-      {
-        files: ["*.ts", "*.tsx"],
-        rules: {
-          "no-undef": "off",
-        },
-      },
-    ],
+    // overrides: [
+    //   {
+    //     files: ["*.ts", "*.tsx"],
+    //     rules: {
+    //       "no-undef": "off",
+    //     },
+    //   },
+    // ],
   },
 ];

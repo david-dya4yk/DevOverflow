@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,7 @@ import { createAnswer } from "@/lib/answer.action";
 import { toast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
 import { api } from "@/lib/api";
+import { title } from "process";
 
 const Editor = dynamic(() => import("@/components/editor/index"), {
   ssr: false,
@@ -47,7 +48,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
     },
   });
 
-  const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
+  const handleSubmit = form.handleSubmit(async (values) => {
     startAnsweringTransition(async () => {
       const result = await createAnswer({
         questionId,
@@ -71,7 +72,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
         });
       }
     });
-  };
+  });
 
   const generateAIAnswers = async () => {
     if (session.status !== "authenticated") {
@@ -113,12 +114,14 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
         description: "AI answer generated successfully.",
       });
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "An error occurred while generating AI answers";
+
       toast({
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "An error occurred while generating AI answers",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -158,10 +161,10 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
       </div>
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleSubmit)}
+          onSubmit={handleSubmit}
           className="mt-6 flex w-full flex-col gap-10"
         >
-          <FormField
+          <Controller
             control={form.control}
             name="content"
             render={({ field }) => (

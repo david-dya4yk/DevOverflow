@@ -4,6 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { cn } from "@/lib/utils";
+import { getToken } from "next-auth/jwt";
 
 interface Props {
   id: string;
@@ -38,7 +39,7 @@ const UserAvatar = ({
             height={36}
             quality={100}
             className="object-cover"
-          ></Image>
+          />
         ) : (
           <AvatarFallback
             className={cn(

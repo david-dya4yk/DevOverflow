@@ -9,10 +9,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 const filters = [
   { name: "React", value: "react" },
   { name: "Js", value: "javascript" },
-  //   { name: "Newest", value: "newest" },
-  //   { name: "Popular", value: "popular" },
-  //   { name: "Unanswered", value: "unanswered" },
-  //   { name: "Recommended", value: "recommended" },
 ];
 
 const HomeFilter = () => {

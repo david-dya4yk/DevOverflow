@@ -24,6 +24,7 @@ export async function signUpWithCredentials(
   const session = await mongoose.startSession();
   session.startTransaction();
 
+
   try {
     const existingUser = await User.findOne({ email }).session(session);
     if (existingUser) {
@@ -72,6 +73,7 @@ export async function signInWithCredentials(
   params: Pick<AuthCredentials, "email" | "password">
 ): Promise<ActionResponse> {
   const validationResult = await action({ params, schema: SignInSchema });
+  console.log({validationResult})
 
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -88,6 +90,8 @@ export async function signInWithCredentials(
       provider: "credentials",
       providerAccountId: email,
     });
+
+    console.log({existingAccount})
 
     if (!existingAccount) throw new NotFoundError("Account");
 

@@ -28,11 +28,9 @@ export async function fetchHandler<T>(
     Accept: "application/json",
   };
 
-  const headers: HeadersInit = { ...defaultHeaders, ...customHeaders };
-
   const config: RequestInit = {
     ...restOptions,
-    headers,
+    headers: { ...defaultHeaders, ...customHeaders },
     signal: controller.signal,
   };
 

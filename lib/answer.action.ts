@@ -21,6 +21,7 @@ export async function createAnswer(
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
+
   const { content, questionId } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
@@ -49,8 +50,10 @@ export async function createAnswer(
 
     question.answers += 1;
     question.markModified("answers");
+
     await question.save({ session });
     await session.commitTransaction();
+
     revalidatePath(ROUTES.QUESTION(questionId));
 
     return { success: true, data: JSON.parse(JSON.stringify(newAnswer)) };
@@ -64,7 +67,7 @@ export async function createAnswer(
 
 export async function getAnswers(params: GetAnswerParams): Promise<
   ActionResponse<{
-    answers: Answers;
+    answers: Answers[];
     isNext: boolean;
     totalAnswers: number;
   }>
@@ -81,8 +84,7 @@ export async function getAnswers(params: GetAnswerParams): Promise<
 
   const { questionId, page = 1, pageSize = 10, query, filter, sort } = params;
 
-  const skip = (Number(page) - 1) * pageSize;
-  const limit = Number(pageSize);
+  const skip = (page - 1) * pageSize;
 
   let sortCriteria = {};
   switch (filter) {
@@ -106,7 +108,7 @@ export async function getAnswers(params: GetAnswerParams): Promise<
       .populate("author", "_id name image")
       .sort(sortCriteria)
       .skip(skip)
-      .limit(limit);
+      .limit(pageSize);
 
     const isNext = totalAnswers > skip + answers.length;
 
