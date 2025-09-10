@@ -19,6 +19,7 @@ async function action<T>({
 }: ActionOptions<T>) {
   if (schema && params) {
     try {
+      schema.parse(params);
     } catch (error) {
       if (error instanceof ZodError) {
         throw new ValidationError(
@@ -30,14 +31,10 @@ async function action<T>({
     }
   }
 
-  let session: Session | null = null;
+  const session = authorize ? await auth() : null;
 
-  if (authorize) {
-    session = await auth();
-
-    if (!session) {
-      return new UnauthorizedError();
-    }
+  if (authorize && !session) {
+    return new UnauthorizedError();
   }
 
   await dbConnect();

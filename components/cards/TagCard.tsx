@@ -32,7 +32,6 @@ const TagCard = ({
 }: Props) => {
   const iconClass = getDeviconClassName(name);
   const iconDescription = getTechDescription(name);
-  console.log("questions", questions);
 
   const content = (
     <>

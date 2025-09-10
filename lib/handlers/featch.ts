@@ -15,7 +15,7 @@ export async function fetchHandler<T>(
   options: FetchOptions = {}
 ): Promise<ActionResponse<T>> {
   const {
-    timeout = 5000,
+    timeout = 50000,
     headers: customHeaders = {},
     ...restOptions
   } = options;
@@ -28,11 +28,9 @@ export async function fetchHandler<T>(
     Accept: "application/json",
   };
 
-  const headers: HeadersInit = { ...defaultHeaders, ...customHeaders };
-
   const config: RequestInit = {
     ...restOptions,
-    headers,
+    headers: { ...defaultHeaders, ...customHeaders },
     signal: controller.signal,
   };
 

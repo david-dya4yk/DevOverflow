@@ -3,15 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
+import { cn } from "@/lib/utils";
+import { getToken } from "next-auth/jwt";
 
 interface Props {
   id: string;
   name: string;
   imageUrl?: string | null;
   className?: string;
+  fallbackClassName?: string;
 }
 
-const UserAvatar = ({ id, name, imageUrl, className = "h-9 w-9" }: Props) => {
+const UserAvatar = ({
+  id,
+  name,
+  imageUrl,
+  className = "h-9 w-9",
+  fallbackClassName,
+}: Props) => {
   const initials = name
     .split(" ")
     .map((word: string) => word[0])
@@ -30,9 +39,14 @@ const UserAvatar = ({ id, name, imageUrl, className = "h-9 w-9" }: Props) => {
             height={36}
             quality={100}
             className="object-cover"
-          ></Image>
+          />
         ) : (
-          <AvatarFallback className="primary-gradient font-space-grotesk font-bold tracking-wider text-white">
+          <AvatarFallback
+            className={cn(
+              "primary-gradient font-space-grotesk font-bold tracking-wider text-white",
+              fallbackClassName
+            )}
+          >
             {initials}
           </AvatarFallback>
         )}

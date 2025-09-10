@@ -38,7 +38,7 @@
     "components.json": true
   },
   "cSpell.ignoreWords": ["answears", "downvotes", "mdxeditor", "upvotes"],
-  "cSpell.words": ["Accaunt", "slugified"],
+  "cSpell.words": ["Accaunt", "hasdown", "hasup", "slugified"],
   "mdb.presetConnections": [
     {
       "name": "Preset Connection",

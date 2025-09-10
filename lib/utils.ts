@@ -36,6 +36,7 @@ export const techDescriptionMap: { [key: string]: string } = {
 
 export const getTechDescription = (techName: string) => {
   const normalizedTechName = techName.replace(/[ .]/g, "").toLowerCase();
+
   return techDescriptionMap[normalizedTechName]
     ? techDescriptionMap[normalizedTechName]
     : `${techName} is a technology or tool widely used in web development, providing valuable features and capabilities.`;
@@ -49,7 +50,7 @@ export const getDeviconClassName = (techName: string) => {
     : "devicon-devicon-plain";
 };
 
-export const getTimeStamp = (createdAt: Date): string => {
+export const getTimeStamp = (createdAt: Date) => {
   const date = new Date(createdAt);
   const now = new Date();
   const past = new Date(date);
@@ -74,4 +75,16 @@ export const getTimeStamp = (createdAt: Date): string => {
 
   const diffInYears = Math.floor(diffInDays / 365);
   return `${diffInYears} years ago`;
+};
+
+export const formatNumber = (number: number): string => {
+  if (number >= 1_000_000) {
+    return (number / 1000000).toFixed(1) + "M";
+  }
+
+  if (number >= 1000) {
+    return (number / 1000).toFixed(1) + "K";
+  }
+
+  return number.toString();
 };
