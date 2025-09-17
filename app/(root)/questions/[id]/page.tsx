@@ -6,21 +6,22 @@ import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
-import { getQuestion, incrementViews } from "@/lib/actions/question.action";
-import { hasVoted } from "@/lib/actions/vote.action";
-import { getAnswers } from "@/lib/answer.action";
-import { formatNumber, getTimeStamp } from "@/lib/utils";
+import {getQuestion, incrementViews} from "@/lib/actions/question.action";
+import {hasVoted} from "@/lib/actions/vote.action";
+import {getAnswers} from "@/lib/answer.action";
+import {formatNumber, getTimeStamp} from "@/lib/utils";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { after } from "next/server";
-import React, { Suspense } from "react";
+import {redirect} from "next/navigation";
+import {after} from "next/server";
+import React, {Suspense} from "react";
+import SaveQuestion from "@/components/questions/SaveQuestion";
 
-const QuestionDetails = async ({ params }: RouteParams) => {
-  const { id } = await params;
-  const { success, data: question } = await getQuestion({ questionId: id });
+const QuestionDetails = async ({params}: RouteParams) => {
+  const {id} = await params;
+  const {success, data: question} = await getQuestion({questionId: id});
 
   after(async () => {
-    await incrementViews({ questionId: id });
+    await incrementViews({questionId: id});
   });
 
   // TODO:Approach 1
@@ -46,7 +47,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     targetType: "question",
   });
 
-  const { author, createdAt, views, tags, answers, title, content } = question;
+  const {author, createdAt, views, tags, answers, title, content} = question;
 
   return (
     <>
@@ -74,6 +75,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
                 targetId={question._id}
                 hasVotedPromise={hasVotedPromise}
               />
+            </Suspense>
+
+            <Suspense fallback={<div>Loading...</div>}>
+              <SaveQuestion questionId={question._id} />
             </Suspense>
           </div>
         </div>
@@ -104,11 +109,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           value={formatNumber(views)}
         />
       </div>
-      <Preview content={content} />
+      <Preview content={content}/>
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
-          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
+          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact/>
         ))}
       </div>
       <section className="my-5">
