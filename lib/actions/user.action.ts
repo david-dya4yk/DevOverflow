@@ -1,3 +1,5 @@
+"use server"
+
 import {PaginatedSearchParamsSchema} from "@/lib/validations";
 import handleError from "../handlers/error";
 import action from "@/lib/handlers/action";
