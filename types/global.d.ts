@@ -70,3 +70,9 @@ interface User {
   portfolio?: string;
   reputation?: string;
 }
+
+interface Collection {
+  _id: string;
+  author: string | Author;
+  questions: Question;
+}
