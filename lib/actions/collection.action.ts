@@ -93,7 +93,7 @@ export async function hasSavedQuestion(params: CollectionBaseParams): Promise<Ac
   }
 }
 
-export async function getSavedQuestion(params: PaginatedSearchParams): Promise<ActionResponse<{
+export async function getSavedQuestions(params: PaginatedSearchParams): Promise<ActionResponse<{
   collection: Collection[],
   isNext: boolean
 }>> {
@@ -109,7 +109,6 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
 
   const userId = validationResult.session?.user?.id;
   const {page = 1, pageSize = 10, query, filter} = params;
-
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize
 
@@ -125,7 +124,7 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
 
   try {
     const pipeline: PipelineStage[] = [
-      {$match: {$author: new mongoose.Types.ObjectId(userId)}},
+      {$match: {author: new mongoose.Types.ObjectId(userId)}},
       {
         $lookup: {
           from: 'questions',
@@ -143,7 +142,7 @@ export async function getSavedQuestion(params: PaginatedSearchParams): Promise<A
           as: 'question.author'
         }
       },
-      {$unwind: "question.author"},
+      {$unwind: "$question.author"},
       {
         $lookup: {
           from: 'tags',

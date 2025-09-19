@@ -74,5 +74,5 @@ interface User {
 interface Collection {
   _id: string;
   author: string | Author;
-  questions: Question;
+  question: Question;
 }
