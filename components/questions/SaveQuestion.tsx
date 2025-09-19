@@ -17,6 +17,7 @@ const SaveQuestion = ({questionId, hasSavedQuestionPromise}: { questionId: strin
 
   const handleSave = async () => {
     if (isLoading) return;
+
     if (!userId) return toast({
       title: "You need to be logged in to save a question!",
       variant: "destructive"
@@ -26,6 +27,7 @@ const SaveQuestion = ({questionId, hasSavedQuestionPromise}: { questionId: strin
 
     try {
       const {success, data, error} = await toggleSaveQuestion({questionId});
+
       if (!success) {
         throw new Error(error?.message || 'An error occurred.');
       }
@@ -35,12 +37,14 @@ const SaveQuestion = ({questionId, hasSavedQuestionPromise}: { questionId: strin
       })
 
     } catch (error) {
+
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : 'An error occurred.',
         variant: "destructive",
       })
     } finally {
+
       setIsLoading(false);
     }
   }
