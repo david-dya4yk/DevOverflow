@@ -4,6 +4,9 @@ import DataRenderer from "@/components/DataRenderer";
 import {EMPTY_QUESTION} from "@/constants/states";
 import {getSavedQuestions} from "@/lib/actions/collection.action";
 import ROUTES from "@/constants/routes";
+import CommonFilter from "@/components/filters/CommonFilter";
+import {CollectionFilters} from "@/constants/filters";
+import Pagination from "@/components/Pagination";
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -14,26 +17,27 @@ const Collections = async ({searchParams}: SearchParams) => {
 
   const {success, data, error} = await getSavedQuestions({
     page: Number(page) || 1,
-    pageSize: Number(pageSize) || 15,
+    pageSize: Number(pageSize) || 10,
     query: query || "",
     filter: filter || "",
   });
 
-  const {collection} = data || {};
-  console.log("collection", collection);
+  const {collection, isNext} = data || {};
 
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
 
-      <section className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearch
           route={ROUTES.COLLECTION}
           imgSrc="/icons/search.svg"
           placeholder="Search question..."
           otherClasses="flex-1"
         />
-      </section>
+
+        <CommonFilter filters={CollectionFilters} otherClasses='min-h-[56px] sm:min-w-[170px]' />
+      </div>
 
       <DataRenderer
         success={success}
@@ -49,6 +53,8 @@ const Collections = async ({searchParams}: SearchParams) => {
           </div>
         )}
       />
+
+      <Pagination page={page} isNext={isNext || false} />
     </>
   );
 };

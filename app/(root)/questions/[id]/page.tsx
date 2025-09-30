@@ -17,19 +17,14 @@ import React, {Suspense} from "react";
 import SaveQuestion from "@/components/questions/SaveQuestion";
 import {hasSavedQuestion} from "@/lib/actions/collection.action";
 
-const QuestionDetails = async ({params}: RouteParams) => {
+const QuestionDetails = async ({params, searchParams}: RouteParams) => {
   const {id} = await params;
+  const {page, pageSize, filter} = await searchParams;
   const {success, data: question} = await getQuestion({questionId: id});
 
   after(async () => {
     await incrementViews({questionId: id});
   });
-
-  // TODO:Approach 1
-  // const [_, { success, data: question }] = await Promise.all([
-  //   await incrementViews({ questionId: id }),
-  // await getQuestion({ questionId: id });
-  // ]);
 
   if (!success || !question) return redirect("/404");
 
@@ -39,8 +34,9 @@ const QuestionDetails = async ({params}: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    page: 1,
-    pageSize: 10,
+    page: Number(page) | 1,
+    pageSize: Number(pageSize) | 10,
+    filter
   });
 
   const hasVotedPromise = hasVoted({
@@ -83,7 +79,7 @@ const QuestionDetails = async ({params}: RouteParams) => {
             </Suspense>
 
             <Suspense fallback={<div>Loading...</div>}>
-              <SaveQuestion questionId={question._id} hasSavedQuestionPromise={hasSavedQuestionPromise} />
+              <SaveQuestion questionId={question._id} hasSavedQuestionPromise={hasSavedQuestionPromise}/>
             </Suspense>
           </div>
         </div>
@@ -123,6 +119,8 @@ const QuestionDetails = async ({params}: RouteParams) => {
       </div>
       <section className="my-5">
         <AllAnswers
+          page={Number(page) || 1}
+          isNext={answersResult?.isNext || false}
           data={answersResult?.answers}
           success={areAnswersLoaded}
           error={answersError}
