@@ -3,6 +3,7 @@ import React from "react";
 import Navbar from "@/components/navigation/navbar";
 import LeftSidebar from "@/components/navigation/LeftSidebar";
 import RightSidebar from "@/components/navigation/RightSidebar";
+import DataRenderer from "@/components/DataRenderer";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -23,3 +24,5 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default RootLayout;
+
+
