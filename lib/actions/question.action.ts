@@ -1,6 +1,6 @@
 "use server";
 
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose, {FilterQuery} from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -11,11 +11,12 @@ import {
   PaginatedSearchParamsSchema,
 } from "../validations";
 
-import Question, { IQuestionDoc } from "@/database/question.module";
+import Question, {IQuestionDoc} from "@/database/question.module";
 import TagQuestion from "@/database/tag-question.module";
-import Tag, { ITagDoc } from "@/database/tag.module";
-import { revalidatePath } from "next/cache";
+import Tag, {ITagDoc} from "@/database/tag.module";
+import {revalidatePath} from "next/cache";
 import ROUTES from "@/constants/routes";
+import dbConnect from "../mongoose";
 
 // export async function createQuestion(
 //   params: CreateQuestionParams
@@ -105,7 +106,7 @@ export async function createQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, tags } = validationResult.params!;
+  const {title, content, tags} = validationResult.params!;
   const userId = validationResult?.session?.user?.id;
 
   const session = await mongoose.startSession();
@@ -113,8 +114,8 @@ export async function createQuestion(
 
   try {
     const [question] = await Question.create(
-      [{ title, content, author: userId }],
-      { session }
+      [{title, content, author: userId}],
+      {session}
     );
 
     if (!question) throw new Error("Failed to create a question.");
@@ -124,9 +125,9 @@ export async function createQuestion(
 
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
-        { name: { $regex: new RegExp(`^${tag}$`, "i") } },
-        { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
-        { upsert: true, new: true, session }
+        {name: {$regex: new RegExp(`^${tag}$`, "i")}},
+        {$setOnInsert: {name: tag}, $inc: {questions: 1}},
+        {upsert: true, new: true, session}
       );
 
       tagIds.push(existingTag._id);
@@ -136,16 +137,16 @@ export async function createQuestion(
       });
     }
 
-    await TagQuestion.insertMany(tagQuestionDocuments, { session });
+    await TagQuestion.insertMany(tagQuestionDocuments, {session});
     await Question.findByIdAndUpdate(
       question._id,
-      { $push: { tags: { $each: tagIds } } },
-      { session }
+      {$push: {tags: {$each: tagIds}}},
+      {session}
     );
 
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {success: true, data: JSON.parse(JSON.stringify(question))};
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -167,7 +168,7 @@ export async function editQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, tags, questionId } = validationResult.params!;
+  const {title, content, tags, questionId} = validationResult.params!;
   const userId = validationResult?.session?.user?.id;
 
   const session = await mongoose.startSession();
@@ -187,7 +188,7 @@ export async function editQuestion(
     if (question.title !== title || question.content !== content) {
       question.title = title;
       question.content = content;
-      await question.save({ session });
+      await question.save({session});
     }
 
     const tagsToAdd = tags.filter(
@@ -206,9 +207,9 @@ export async function editQuestion(
     if (tagsToAdd.length > 0) {
       for (const tag of tagsToAdd) {
         const existingTag = await Tag.findOneAndUpdate(
-          { name: { $regex: `^${tag}$`, $options: "i" } },
-          { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
-          { upsert: true, new: true, session }
+          {name: {$regex: `^${tag}$`, $options: "i"}},
+          {$setOnInsert: {name: tag}, $inc: {questions: 1}},
+          {upsert: true, new: true, session}
         );
 
         if (existingTag) {
@@ -226,14 +227,14 @@ export async function editQuestion(
       const tagIdsToRemove = tagsToRemove.map((tag: ITagDoc) => tag._id);
 
       await Tag.updateMany(
-        { _id: { $in: tagIdsToRemove } },
-        { $inc: { questions: -1 } },
-        { session }
+        {_id: {$in: tagIdsToRemove}},
+        {$inc: {questions: -1}},
+        {session}
       );
 
       await TagQuestion.deleteMany(
-        { tag: { $in: tagIdsToRemove }, question: questionId },
-        { session }
+        {tag: {$in: tagIdsToRemove}, question: questionId},
+        {session}
       );
 
       question.tags = question.tags.filter(
@@ -245,13 +246,13 @@ export async function editQuestion(
     }
 
     if (newTagDocuments.length > 0) {
-      await TagQuestion.insertMany(newTagDocuments, { session });
+      await TagQuestion.insertMany(newTagDocuments, {session});
     }
 
-    await question.save({ session });
+    await question.save({session});
     await session.commitTransaction();
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {success: true, data: JSON.parse(JSON.stringify(question))};
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -273,7 +274,7 @@ export async function getQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId } = validationResult.params!;
+  const {questionId} = validationResult.params!;
 
   try {
     const question = await Question.findById(questionId)
@@ -284,7 +285,7 @@ export async function getQuestion(
       throw new Error("Question not found");
     }
 
-    return { success: true, data: JSON.parse(JSON.stringify(question)) };
+    return {success: true, data: JSON.parse(JSON.stringify(question))};
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
@@ -302,20 +303,20 @@ export async function getQuestions(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { page = 1, pageSize = 10, query, filter } = params;
+  const {page = 1, pageSize = 10, query, filter} = params;
 
   const skip = Number(page - 1) * pageSize;
   const limit = Number(pageSize);
   const filterQuery: FilterQuery<typeof Question> = {};
 
   if (filter === "recommended") {
-    return { success: true, data: { questions: [], isNext: false } };
+    return {success: true, data: {questions: [], isNext: false}};
   }
 
   if (query) {
     filterQuery.$or = [
-      { title: { $regex: new RegExp(query, "i") } },
-      { content: { $regex: new RegExp(query, "i") } },
+      {title: {$regex: new RegExp(query, "i")}},
+      {content: {$regex: new RegExp(query, "i")}},
     ];
   }
 
@@ -323,17 +324,17 @@ export async function getQuestions(
 
   switch (filter) {
     case "newest":
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = {createdAt: -1};
       break;
     case "unanswered":
       filterQuery.answers = 0;
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = {createdAt: -1};
       break;
     case "popular":
-      sortCriteria = { upvotes: -1 };
+      sortCriteria = {upvotes: -1};
       break;
     default:
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = {createdAt: -1};
       break;
   }
 
@@ -352,7 +353,7 @@ export async function getQuestions(
 
     return {
       success: true,
-      data: { questions: JSON.parse(JSON.stringify(questions)), isNext },
+      data: {questions: JSON.parse(JSON.stringify(questions)), isNext},
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -371,7 +372,7 @@ export async function incrementViews(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId } = validationResult.params!;
+  const {questionId} = validationResult.params!;
 
   try {
     const question = await Question.findById(questionId);
@@ -383,7 +384,25 @@ export async function incrementViews(
     await question.save();
     revalidatePath(ROUTES.QUESTION(questionId));
 
-    return { success: true, data: { views: question.views } };
+    return {success: true, data: {views: question.views}};
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getHotQuestion(): Promise<ActionResponse<Question[]>> {
+  try {
+    await dbConnect()
+
+    const questions = await Question.find()
+      .sort({views: -1, upvotes: -1})
+      .limit(5)
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(questions))
+    }
+
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
