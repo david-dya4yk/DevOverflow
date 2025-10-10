@@ -42,7 +42,7 @@ const TagCard = ({
         </div>
         {remove && (
           <Image
-            src="./icons/close.svg"
+            src="/icons/close.svg"
             width={12}
             height={12}
             alt="close"

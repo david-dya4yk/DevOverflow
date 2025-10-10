@@ -17,7 +17,7 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import TagCard from "../cards/TagCard";
-import { number, z } from "zod";
+import { z } from "zod";
 import dynamic from "next/dynamic";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
