@@ -4,7 +4,7 @@ import mongoose, {FilterQuery} from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
-  AskQuestionSchema,
+  AskQuestionSchema, DeleteQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
   IncrementViewsSchema,
@@ -17,81 +17,7 @@ import Tag, {ITagDoc} from "@/database/tag.module";
 import {revalidatePath} from "next/cache";
 import ROUTES from "@/constants/routes";
 import dbConnect from "../mongoose";
-
-// export async function createQuestion(
-//   params: CreateQuestionParams
-// ): Promise<ActionResponse<Question>> {
-//   const validationResult = await action({
-//     params,
-//     schema: AskQuestionSchema,
-//     authorize: true,
-//   });
-
-//   if (validationResult instanceof Error) {
-//     return handleError(validationResult) as ErrorResponse;
-//   }
-
-//   const { title, content, tags } = validationResult.params!;
-//   const userId = validationResult?.session?.user?.id;
-
-//   const session = await mongoose.startSession();
-//   session.startTransaction();
-
-//   try {
-//     const [question] = await Question.create(
-//       [{ title, content, author: userId }],
-//       { session }
-//     );
-
-//     if (!question) throw new Error("Failed to create a question.");
-
-//     const tagIds: mongoose.Types.ObjectId[] = [];
-//     const tagQuestionDocuments = [];
-
-//     // Переконаємося, що масив `tags` коректний
-//     const validTags = (tags || []).filter(
-//       (tag) => typeof tag === "string" && tag.trim().length > 0
-//     );
-
-//     for (const tag of validTags) {
-//       const existingTag = await Tag.findOneAndUpdate(
-//         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
-//         { $setOnInsert: { name: tag }, $inc: { question: 1 } }, // Додав $setOnInsert
-//         { upsert: true, new: true, session }
-//       );
-
-//       if (!existingTag)
-//         throw new Error(`Failed to create or update tag: ${tag}`);
-
-//       tagIds.push(existingTag._id);
-//       tagQuestionDocuments.push({
-//         tag: existingTag._id,
-//         question: question._id,
-//       });
-//     }
-
-//     if (tagQuestionDocuments.length > 0) {
-//       await TagQuestion.insertMany(tagQuestionDocuments, { session });
-//     }
-
-//     if (tagIds.length > 0) {
-//       await Question.findByIdAndUpdate(
-//         question._id,
-//         { $push: { tags: { $each: tagIds } } },
-//         { session }
-//       );
-//     }
-
-//     await session.commitTransaction();
-//     return { success: true, data: JSON.parse(JSON.stringify(question)) };
-//   } catch (error) {
-//     await session.abortTransaction();
-//     console.error("Error creating question:", error);
-//     return handleError(error) as ErrorResponse;
-//   } finally {
-//     await session.endSession();
-//   }
-// }
+import {Answer, Collection, Vote} from "@/database";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -157,7 +83,7 @@ export async function createQuestion(
 
 export async function editQuestion(
   params: EditQuestionParams
-): Promise<ActionResponse<IQuestionDoc>> {
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
@@ -404,6 +330,79 @@ export async function getHotQuestion(): Promise<ActionResponse<Question[]>> {
     }
 
   } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteQuestion(
+  params: DeleteQuestionParams
+): Promise<ActionResponse> {
+  const validationResult = await action({
+    params,
+    schema: DeleteQuestionSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = validationResult.params!;
+  const { user } = validationResult.session!;
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const question = await Question.findById(questionId).session(session);
+    if (!question) throw new Error("Question not found");
+
+    if (question.author.toString() !== user?.id)
+      throw new Error("You are not authorized to delete this question");
+
+    await Collection.deleteMany({ question: questionId }).session(session);
+
+    await TagQuestion.deleteMany({ question: questionId }).session(session);
+
+    if (question.tags.length > 0) {
+      await Tag.updateMany(
+        { _id: { $in: question.tags } },
+        { $inc: { questions: -1 } },
+        { session }
+      );
+    }
+
+    await Vote.deleteMany({
+      actionId: questionId,
+      actionType: "question",
+    }).session(session);
+
+    const answers = await Answer.find({ question: questionId }).session(
+      session
+    );
+
+    if (answers.length > 0) {
+      await Answer.deleteMany({ question: questionId }).session(session);
+
+      await Vote.deleteMany({
+        actionId: { $in: answers.map((answer) => answer.id) },
+        actionType: "answer",
+      }).session(session);
+    }
+
+    await Question.findByIdAndDelete(questionId).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    revalidatePath(`/profile/${user?.id}`);
+
+    return { success: true };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     return handleError(error) as ErrorResponse;
   }
 }
