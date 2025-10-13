@@ -14,6 +14,8 @@ import {
 import { toast } from "@/hooks/use-toast"
 import Image from "next/image"
 import {useRouter} from "next/navigation";
+import {deleteAnswer} from "@/lib/answer.action";
+import {deleteQuestion} from "@/lib/actions/question.action";
 
 interface Props {
   type: 'Question' | 'Answer'
@@ -27,9 +29,9 @@ const EditDeleteAction = ({type, itemId}: Props) => {
     router.push(`/questions/${itemId}/edit`)
   }
 
-
   const handleDelete = async () => {
     if(type === 'Question') {
+      await deleteQuestion({ questionId: itemId });
 
       toast({
         title: 'Question deleted.',
@@ -38,6 +40,8 @@ const EditDeleteAction = ({type, itemId}: Props) => {
 
       return
     }
+
+    await deleteAnswer({answerId: itemId})
 
     toast({
       title: 'Answer deleted.',
@@ -54,16 +58,21 @@ const EditDeleteAction = ({type, itemId}: Props) => {
       )}
 
       <AlertDialog>
+
         <AlertDialogTrigger className="cursor-pointer">
           <Image src='/icons/trash.svg' alt='trash' width={14} height={14}/>
         </AlertDialogTrigger>
+
         <AlertDialogContent className="background-light800_dark300">
+
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your
               {type === 'Question' ? ' question' : ' answer'} and remove it from our servers.
             </AlertDialogDescription>
+
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className='btn'>Cancel</AlertDialogCancel>

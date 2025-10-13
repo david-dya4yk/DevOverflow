@@ -1,13 +1,17 @@
 "use server";
 
-import Answer, { IAnswerDoc } from "@/database/answer.module";
-import { AnswerServerSchema, GetAnswersSchema } from "./validations";
+import Answer, {IAnswerDoc} from "@/database/answer.module";
+import {
+  AnswerServerSchema,
+  DeleteAnswerSchema,
+  GetAnswersSchema
+} from "./validations";
 import action from "./handlers/action";
 import handleError from "./handlers/error";
 import mongoose from "mongoose";
-import { revalidatePath } from "next/cache";
+import {revalidatePath} from "next/cache";
 import ROUTES from "@/constants/routes";
-import { Question } from "@/database";
+import {Question, Vote} from "@/database";
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -22,7 +26,7 @@ export async function createAnswer(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { content, questionId } = validationResult.params!;
+  const {content, questionId} = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
   const session = await mongoose.startSession();
@@ -30,7 +34,6 @@ export async function createAnswer(
 
   try {
     const question = await Question.findById(questionId);
-    // console.log("Question", question);
     if (!question) {
       throw new Error("Question not found");
     }
@@ -43,7 +46,7 @@ export async function createAnswer(
           content,
         },
       ],
-      { session }
+      {session}
     );
 
     if (!newAnswer) throw new Error("Failed to create answer");
@@ -51,12 +54,12 @@ export async function createAnswer(
     question.answers += 1;
     question.markModified("answers");
 
-    await question.save({ session });
+    await question.save({session});
     await session.commitTransaction();
 
     revalidatePath(ROUTES.QUESTION(questionId));
 
-    return { success: true, data: JSON.parse(JSON.stringify(newAnswer)) };
+    return {success: true, data: JSON.parse(JSON.stringify(newAnswer))};
   } catch (error) {
     await session.abortTransaction();
     return handleError(error) as ErrorResponse;
@@ -80,31 +83,30 @@ export async function getAnswers(params: GetAnswerParams): Promise<
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
-  // console.log("validationResult", validationResult);
 
-  const { questionId, page = 1, pageSize = 10, query, filter, sort } = params;
+  const {questionId, page = 1, pageSize = 10, query, filter, sort} = params;
 
   const skip = (page - 1) * pageSize;
 
   let sortCriteria = {};
   switch (filter) {
     case "latest":
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = {createdAt: -1};
       break;
     case "oldest":
-      sortCriteria = { createdAt: 1 };
+      sortCriteria = {createdAt: 1};
       break;
     case "popular":
-      sortCriteria = { upvotes: 1 };
+      sortCriteria = {upvotes: 1};
       break;
     default:
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = {createdAt: -1};
       break;
   }
 
   try {
-    const totalAnswers = await Answer.countDocuments({ question: questionId });
-    const answers = await Answer.find({ question: questionId })
+    const totalAnswers = await Answer.countDocuments({question: questionId});
+    const answers = await Answer.find({question: questionId})
       .populate("author", "_id name image")
       .sort(sortCriteria)
       .skip(skip)
@@ -120,6 +122,42 @@ export async function getAnswers(params: GetAnswerParams): Promise<
         totalAnswers,
       },
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function deleteAnswer(params: DeleteAnswerParams): Promise<ActionResponse> {
+  const validationResult = await action({
+    params,
+    schema: DeleteAnswerSchema,
+    authorize: true,
+  })
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const {answerId} = validationResult.params!;
+  const {user} = validationResult.session!
+
+  try {
+    const answer = await Answer.findById({_id: answerId});
+    if (!answer) throw new Error("This answer does not exist.");
+    if (user?.id !== answer.author.toString()) throw new Error("You are not authorized to delete this answer");
+
+    await Question.findByIdAndUpdate(
+      answer.question,
+      { $inc: { answers: -1 } },
+      { new: true }
+    );
+
+    await Vote.deleteMany({ actionId: answerId, actionType: "answer" });
+    await Answer.findByIdAndDelete(answerId);
+
+    revalidatePath(`/profile/${user?.id}`);
+
+    return {success: true}
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

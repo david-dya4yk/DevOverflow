@@ -1,4 +1,3 @@
-import React from "react";
 import {notFound} from "next/navigation";
 import {
   getUser,
@@ -10,7 +9,6 @@ import {auth} from "@/auth";
 import UserAvatar from "@/components/UserAvatar";
 import ProfileLink from "@/components/user/ProfileLink";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
 import Stats from "@/components/user/Stats";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs"
 import DataRenderer from "@/components/DataRenderer";
@@ -19,6 +17,7 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
 import TagCard from "@/components/cards/TagCard";
+import {Button} from "@/components/ui/button";
 
 const Profile = async ({params, searchParams}: RouteParams) => {
   const {id} = await params;
@@ -171,7 +170,8 @@ const Profile = async ({params, searchParams}: RouteParams) => {
                               content={answer.content.slice(0, 27)}
                               showActionBtns={loggedInUser?.user?.id === answer.author._id}
                               containerClasses='card-wrapper rounded-[10px] px-7 py-9 sm:px-11'
-                              showReadMore/>
+                              showReadMore
+                  />
                 ))}
               </div>
             }

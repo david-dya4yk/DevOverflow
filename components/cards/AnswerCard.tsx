@@ -1,14 +1,12 @@
-import Link from "next/link";
-
-import ROUTES from "@/constants/routes";
-import {cn, getTimeStamp} from "@/lib/utils";
-
-import UserAvatar from "../UserAvatar";
-import Preview from "../editor/Preview";
-import React, {Suspense} from "react";
-import Votes from "@/components/votes/Votes";
 import { hasVoted } from "@/lib/actions/vote.action";
+import {cn, getTimeStamp} from "@/lib/utils";
 import EditDeleteAction from "@/components/user/EditDeleteAction";
+import UserAvatar from "@/components/UserAvatar";
+import Link from "next/link";
+import ROUTES from "@/constants/routes";
+import {Suspense} from "react";
+import Votes from "@/components/votes/Votes";
+import Preview from "@/components/editor/Preview";
 
 interface Props extends Answers {
   containerClasses?: string,

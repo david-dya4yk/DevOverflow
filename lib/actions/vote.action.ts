@@ -41,6 +41,7 @@ export async function updateVoteCount(
         new Error("Failed to update vote count")
       ) as ErrorResponse;
     }
+
     return {success: true};
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -164,6 +165,7 @@ export async function hasVoted(
         data: {hasDownvoted: false, hasUpvoted: false},
       };
     }
+
     return {
       success: true,
       data: {

@@ -92,16 +92,18 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
     startTransition(async () => {
       if (isEdit && question) {
         const result = await editQuestion({
-          questionId: question._id,
+          questionId: question?._id,
           ...data,
         });
+
         if (result.success) {
           toast({
             title: "Success",
             description: "Question updated successfully.",
           });
 
-          if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
+          if (result.data) router.push(ROUTES.QUESTION(result.data._id));
+
         } else {
           toast({
             title: `Error ${result.status}`,
@@ -109,6 +111,7 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
             variant: "destructive",
           });
         }
+
         return;
       }
       const result = await createQuestion(data);
@@ -120,6 +123,7 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
         });
 
         if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
+
       } else {
         toast({
           title: `Error ${result.status}`,
