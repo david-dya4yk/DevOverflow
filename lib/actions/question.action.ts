@@ -1,6 +1,6 @@
 "use server";
 
-import mongoose, {FilterQuery} from "mongoose";
+import mongoose, {FilterQuery, Types} from "mongoose";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import {
@@ -11,13 +11,16 @@ import {
   PaginatedSearchParamsSchema,
 } from "../validations";
 
-import Question, {IQuestionDoc} from "@/database/question.module";
+import Question from "@/database/question.module";
 import TagQuestion from "@/database/tag-question.module";
 import Tag, {ITagDoc} from "@/database/tag.module";
 import {revalidatePath} from "next/cache";
 import ROUTES from "@/constants/routes";
 import dbConnect from "../mongoose";
-import {Answer, Collection, Vote} from "@/database";
+import {Answer, Collection, Interaction, Vote} from "@/database";
+import {createInteraction} from "@/lib/actions/interaction.action";
+import {after} from 'next/server'
+import {auth} from "@/auth";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -69,6 +72,15 @@ export async function createQuestion(
       {$push: {tags: {$each: tagIds}}},
       {session}
     );
+
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: question._id.toString(),
+        actionTarget: "question",
+        authorId: userId as string,
+      });
+    });
 
     await session.commitTransaction();
 
@@ -217,6 +229,59 @@ export async function getQuestion(
   }
 }
 
+export async function getRecommendedQuestions({
+                                                userId,
+                                                query,
+                                                skip,
+                                                limit
+                                              }: RecommendationParams) {
+  const interactions = await Interaction.find({
+    user: new Types.ObjectId(userId),
+    actionType: "question",
+    action: {$in: ["view", "upvote", "bookmark", "post"]}
+  }).sort({createdAt: -1})
+    .limit(50)
+    .lean();
+
+  const interactedQuestionIds = interactions.map((i) => i.actionId);
+
+  const interactedQuestions = await Question.find({
+    _id: {$in: interactedQuestionIds},
+  }).select("tags")
+
+  const allTags = interactedQuestions.flatMap((q) => q.tags.map((tag: Types.ObjectId) => tag.toString()))
+
+  const uniqueTagIds = [...new Set(allTags)]
+
+  const recommendedQuery: FilterQuery<typeof Question> = {
+    _id: {$nin: interactedQuestions},
+    author: {$ne: new Types.ObjectId(userId)},
+    tags: {$in: uniqueTagIds.map((id) => new Types.ObjectId(id))}
+  }
+
+  if (query) {
+    recommendedQuery.$or = [
+      {title: {$regex: query, $options: "i"}},
+      {content: {$regex: query, $options: "i"}}
+    ]
+  }
+
+  const total = await Question.countDocuments(recommendedQuery)
+
+  const questions = await Question.find(recommendedQuery)
+    .populate("tags", "name")
+    .populate("author", "name image")
+    .sort({upvoted: -1, views: -1})
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  return {
+    questions: JSON.parse(JSON.stringify(questions)),
+    isNext: total >   skip + questions.length
+  }
+}
+
 export async function getQuestions(
   params: PaginatedSearchParams
 ): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
@@ -236,7 +301,21 @@ export async function getQuestions(
   const filterQuery: FilterQuery<typeof Question> = {};
 
   if (filter === "recommended") {
-    return {success: true, data: {questions: [], isNext: false}};
+    const session = await auth();
+    const userId = session?.user?.id;
+
+    if (!userId) {
+      return { success: true, data: { questions: [], isNext: false } };
+    }
+
+    const recommended = await getRecommendedQuestions({
+      userId,
+      query,
+      skip,
+      limit,
+    });
+
+    return { success: true, data: recommended };
   }
 
   if (query) {
@@ -347,8 +426,8 @@ export async function deleteQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId } = validationResult.params!;
-  const { user } = validationResult.session!;
+  const {questionId} = validationResult.params!;
+  const {user} = validationResult.session!;
 
   const session = await mongoose.startSession();
 
@@ -361,15 +440,15 @@ export async function deleteQuestion(
     if (question.author.toString() !== user?.id)
       throw new Error("You are not authorized to delete this question");
 
-    await Collection.deleteMany({ question: questionId }).session(session);
+    await Collection.deleteMany({question: questionId}).session(session);
 
-    await TagQuestion.deleteMany({ question: questionId }).session(session);
+    await TagQuestion.deleteMany({question: questionId}).session(session);
 
     if (question.tags.length > 0) {
       await Tag.updateMany(
-        { _id: { $in: question.tags } },
-        { $inc: { questions: -1 } },
-        { session }
+        {_id: {$in: question.tags}},
+        {$inc: {questions: -1}},
+        {session}
       );
     }
 
@@ -378,15 +457,15 @@ export async function deleteQuestion(
       actionType: "question",
     }).session(session);
 
-    const answers = await Answer.find({ question: questionId }).session(
+    const answers = await Answer.find({question: questionId}).session(
       session
     );
 
     if (answers.length > 0) {
-      await Answer.deleteMany({ question: questionId }).session(session);
+      await Answer.deleteMany({question: questionId}).session(session);
 
       await Vote.deleteMany({
-        actionId: { $in: answers.map((answer) => answer.id) },
+        actionId: {$in: answers.map((answer) => answer.id)},
         actionType: "answer",
       }).session(session);
     }
@@ -398,7 +477,7 @@ export async function deleteQuestion(
 
     revalidatePath(`/profile/${user?.id}`);
 
-    return { success: true };
+    return {success: true};
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

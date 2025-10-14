@@ -16,7 +16,7 @@ const formatResponse = (
     error: {
       message,
       details: errors,
-    },
+    }
   };
 
   return responseType === "api"

@@ -18,8 +18,6 @@ const Community = async ({searchParams}: RouteParams) => {
     filter
   })
 
-  console.log({data});
-
   const {users, isNext} = data || {}
 
   return <div>
