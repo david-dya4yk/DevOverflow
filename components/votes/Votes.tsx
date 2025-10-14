@@ -32,7 +32,6 @@ const Votes = ({
   const { hasUpvoted, hasDownvoted } = data || {};
 
   const handleVote = async (voteType: "upvote" | "downvote") => {
-    console.log("click");
     if (!userId)
       return toast({
         title: "Please login to vote",
@@ -55,9 +54,6 @@ const Votes = ({
       }
 
       const successMessage = "Vote was successfully";
-      // voteType === "upvote"
-      //   ? `Upvote ${!hasUpvoted ? "added" : "removed"} suuccessfully`
-      //   : `Upvote ${!hasDownvoted ? "added" : "removed"} suuccessfully`;
 
       toast({
         title: successMessage,

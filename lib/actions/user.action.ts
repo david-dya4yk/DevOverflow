@@ -9,7 +9,7 @@ import handleError from "../handlers/error";
 import action from "@/lib/handlers/action";
 import {FilterQuery, PipelineStage, Types} from "mongoose";
 import {Answer, Question, User} from "@/database";
-import Anser from "anser";
+import {assignBadges} from "@/lib/utils";
 
 export async function getUsers(params: PaginatedSearchParams): Promise<ActionResponse<{
   users: User[],
@@ -78,8 +78,6 @@ export async function getUsers(params: PaginatedSearchParams): Promise<ActionRes
 
 export async function getUser(params: GetUserParams): Promise<ActionResponse<{
   user: User;
-  totalQuestions: number;
-  totalAnswers: number;
 }>> {
 
   const validationResult = await action({params, schema: GetUserSchema})
@@ -95,15 +93,10 @@ export async function getUser(params: GetUserParams): Promise<ActionResponse<{
 
     if (!user) throw new Error('User not found');
 
-    const totalQuestions = await Question.countDocuments({author: userId});
-    const totalAnswers = await Answer.countDocuments({author: userId});
-
     return {
       success: true,
       data: {
         user: JSON.parse(JSON.stringify(user)),
-        totalQuestions,
-        totalAnswers
       }
     }
 
@@ -153,7 +146,6 @@ export async function getUserAnswers(params: GetUserAnswersParams): Promise<Acti
   answers: Answers[];
   isNext: boolean
 }>> {
-
   const validationResult = await action({
     params,
     schema: GetUserQuestionsSchema
@@ -235,6 +227,76 @@ export async function getUserTopTags(params: GetUserTagsParams): Promise<ActionR
       }
     }
 
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUserStats(params: GetUserParams): Promise<
+  ActionResponse<{
+    totalQuestions: number;
+    totalAnswers: number;
+    badges: Badges;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetUserSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const {userId} = params;
+
+  try {
+    const questionStatsResult = await Question.aggregate<{count: number, upvotes: number, views: number}>([
+      {$match: {author: new Types.ObjectId(userId)}},
+      {
+        $group: {
+          _id: null,
+          count: {$sum: 1},
+          upvotes: {$sum: "$upvotes"},
+          views: {$sum: "$views"},
+        },
+      },
+    ]);
+
+    const answerStatsResult = await Answer.aggregate<{count: number, upvotes: number}>([
+      {$match: {author: new Types.ObjectId(userId)}},
+      {
+        $group: {
+          _id: null,
+          count: {$sum: 1},
+          upvotes: {$sum: "$upvotes"},
+        },
+      },
+    ]);
+
+    const questionStats = questionStatsResult.at(0)
+    const answerStats = answerStatsResult.at(0)
+
+    const badges = assignBadges({
+      criteria: [
+        {type: "ANSWER_COUNT", count: answerStats?.count || 0},
+        {type: "QUESTION_COUNT", count: questionStats?.count || 0},
+        {
+          type: "QUESTION_UPVOTES",
+          count: (questionStats?.upvotes || 0) + (answerStats?.upvotes || 0),
+        },
+        {type: "TOTAL_VIEWS", count: questionStats?.views || 0},
+      ],
+    });
+
+    return {
+      success: true,
+      data: {
+        totalQuestions: questionStats?.count ?? 0,
+        totalAnswers: answerStats?.count ?? 0,
+        badges,
+      },
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

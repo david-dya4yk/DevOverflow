@@ -12,6 +12,8 @@ import mongoose from "mongoose";
 import {revalidatePath} from "next/cache";
 import ROUTES from "@/constants/routes";
 import {Question, Vote} from "@/database";
+import {createInteraction} from "@/lib/actions/interaction.action";
+import { after } from 'next/server'
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -38,7 +40,7 @@ export async function createAnswer(
       throw new Error("Question not found");
     }
 
-    const newAnswer = await Answer.create(
+    const [newAnswer] = await Answer.create(
       [
         {
           author: userId,
@@ -55,6 +57,16 @@ export async function createAnswer(
     question.markModified("answers");
 
     await question.save({session});
+
+    after(async () => {
+      await createInteraction({
+        action: "post",
+        actionId: newAnswer._id.toString(),
+        actionTarget: "answer",
+        authorId: userId as string,
+      });
+    });
+
     await session.commitTransaction();
 
     revalidatePath(ROUTES.QUESTION(questionId));
