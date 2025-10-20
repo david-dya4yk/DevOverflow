@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pino", "pino-pretty"],
+  reactStrictMode: false,
   images: {
     remotePatterns: [
       {
@@ -22,6 +23,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "plus.unsplash.com",
+        port: "",
+      },
+      {
+        protocol: "https",
+        hostname: "*",
         port: "",
       },
     ],
