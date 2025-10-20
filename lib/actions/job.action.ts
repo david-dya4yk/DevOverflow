@@ -17,9 +17,6 @@ export const fetchCountries = async () => {
 export const fetchJobs = async (filters: JobFilterParams) => {
   const { query, page } = filters;
 
-  console.log("query", query);
-  console.log("page", page);
-
   const headers = {
     "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY ?? "",
     "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
@@ -34,6 +31,5 @@ export const fetchJobs = async (filters: JobFilterParams) => {
 
   const result = await response.json();
 
-  console.log("result", result);
   return result.data;
 };
