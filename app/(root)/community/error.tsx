@@ -7,7 +7,6 @@ export default function Error({error, reset}: {
   reset: () => void
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
     console.error(error)
   }, [error])
 
@@ -15,11 +14,9 @@ export default function Error({error, reset}: {
     <div>
       <h2>Something went wrong!</h2>
       <button
-        onClick={
-          // Attempt to recover by trying to re-render the segment
-          () => reset()
-        }
+        onClick={() => reset()}
       >
+
         Try again
       </button>
     </div>
