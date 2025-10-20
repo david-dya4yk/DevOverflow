@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
+import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "@/components/ui/toaster";
-import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
+import {ThemeProvider} from "next-themes";
+import {Toaster} from "@/components/ui/toaster";
+import {SessionProvider} from "next-auth/react";
+import {auth} from "@/auth";
 
 const inter = localFont({
   src: "./fonts/InterVF.ttf",
@@ -26,35 +26,38 @@ export const metadata: Metadata = {
     icon: "/images/site-logo.svg",
   },
 };
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({children}: { children: React.ReactNode }) => {
   const session = await auth();
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link
-          rel="stylesheet"
-          type="text/css"
-          href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
-        />
-      </head>
-      <SessionProvider session={session}>
-        <body
-          className={`${inter.className} ${sapaceGrotesk.variable} antialiased`}
-        >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-          <Toaster />
-        </body>
-      </SessionProvider>
+    <head>
+      <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+      />
+      <title>DevOverflow – StackOverflow Clone Built with Next.js</title>
+      <meta name="description"
+            content="Devoverflow is a modern Q&A platform for developers, inspired by StackOverflow and built with Next.js. Ask questions, share answers, and collaborate with devs worldwide in a fast, responsive interface." />
+    </head>
+    <SessionProvider session={session}>
+      <body
+        className={`${inter.className} ${sapaceGrotesk.variable} antialiased`}
+      >
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        {children}
+      </ThemeProvider>
+      <Toaster/>
+      </body>
+    </SessionProvider>
     </html>
-  );
+);
 };
 
 export default RootLayout;
