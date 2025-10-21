@@ -1,10 +1,10 @@
-import { IUser } from "@/database/user.module";
-import { fetchHandler } from "./handlers/featch";
-import { IAccount } from "@/database/account.module";
-import ROUTES from "@/constants/routes";
+import { IUser } from '@/database/user.module';
+import { fetchHandler } from './handlers/featch';
+import { IAccount } from '@/database/account.module';
+import ROUTES from '@/constants/routes';
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
 
 export const api = {
   users: {
@@ -12,23 +12,23 @@ export const api = {
     getById: (id: string) => fetchHandler(`${API_BASE_URL}/users/${id}`),
     getByEmail: (email: string) =>
       fetchHandler(`${API_BASE_URL}/users/email`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ email }),
       }),
     create: (userData: Partial<IUser>) =>
       fetchHandler(`${API_BASE_URL}/users`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ userData }),
       }),
 
     update: (id: string, userData: Partial<IUser>) =>
       fetchHandler(`${API_BASE_URL}/users/${id}`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify({ userData }),
       }),
     delate: (id: string) =>
       fetchHandler(`${API_BASE_URL}/users/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       }),
   },
   accounts: {
@@ -36,23 +36,23 @@ export const api = {
     getById: (id: string) => fetchHandler(`${API_BASE_URL}/accounts/${id}`),
     getByProvider: (providerAccountId: string) =>
       fetchHandler(`${API_BASE_URL}/accounts/provider`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ providerAccountId }),
       }),
     create: (accountData: Partial<IAccount>) =>
       fetchHandler(`${API_BASE_URL}/accounts`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ accountData }),
       }),
 
     update: (id: string, accountData: Partial<IAccount>) =>
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, {
-        method: "PUT",
+        method: 'PUT',
         body: JSON.stringify({ accountData }),
       }),
     delate: (id: string) =>
       fetchHandler(`${API_BASE_URL}/accounts/${id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       }),
   },
   auth: {
@@ -62,7 +62,7 @@ export const api = {
       providerAccountId,
     }: SignInWithOAuthParams) =>
       fetchHandler(`${API_BASE_URL}/auth/${ROUTES.SIGN_IN_WITH_OAUTH}`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ user, provider, providerAccountId }),
       }),
   },
@@ -73,7 +73,7 @@ export const api = {
       userAnswer?: string
     ): APIErrorResponse =>
       fetchHandler(`${API_BASE_URL}/ai/answers`, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({ question, content, userAnswer }),
       }),
   },

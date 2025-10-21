@@ -1,13 +1,13 @@
-import { FilterQuery } from "mongoose";
-import action from "../handlers/action";
-import handleError from "../handlers/error";
+import { FilterQuery } from 'mongoose';
+import action from '../handlers/action';
+import handleError from '../handlers/error';
 import {
   GetTagQuestionSchema,
   PaginatedSearchParamsSchema,
-} from "../validations";
-import { Question, Tag } from "@/database";
-import { filter } from "@mdxeditor/editor";
-import dbConnect from "../mongoose";
+} from '../validations';
+import { Question, Tag } from '@/database';
+import { filter } from '@mdxeditor/editor';
+import dbConnect from '../mongoose';
 
 export const getTags = async (
   params: PaginatedSearchParams
@@ -28,22 +28,22 @@ export const getTags = async (
   const filterQuery: FilterQuery<typeof Tag> = {};
 
   if (query) {
-    filterQuery.$or = [{ name: { $regex: query, $options: "i" } }];
+    filterQuery.$or = [{ name: { $regex: query, $options: 'i' } }];
   }
 
   let sortCriteria = {};
 
   switch (filter) {
-    case "popular":
+    case 'popular':
       sortCriteria = { questions: -1 };
       break;
-    case "recent":
+    case 'recent':
       sortCriteria = { createdAd: -1 };
       break;
-    case "oldest":
+    case 'oldest':
       sortCriteria = { createdAd: 1 };
       break;
-    case "name":
+    case 'name':
       sortCriteria = { name: 1 };
       break;
     default:
@@ -92,22 +92,22 @@ export const getTagQuestions = async (
 
   try {
     const tag = await Tag.findById(tagId);
-    if (!tag) throw new Error("Tag not found");
+    if (!tag) throw new Error('Tag not found');
 
     const filterQuery: FilterQuery<typeof Question> = {
       tags: { $in: [tagId] },
     };
 
     if (query) {
-      filterQuery.title = { $regex: query, $options: "i" };
+      filterQuery.title = { $regex: query, $options: 'i' };
     }
 
     const totalQuestions = await Question.countDocuments(filterQuery);
     const questions = await Question.find(filterQuery)
-      .select("id title views answers upvotes downvotes author createdAt")
+      .select('id title views answers upvotes downvotes author createdAt')
       .populate([
-        { path: "author", select: "name image" },
-        { path: "tags", select: "name" },
+        { path: 'author', select: 'name image' },
+        { path: 'tags', select: 'name' },
       ])
       .skip(skip)
       .limit(limit);
@@ -126,17 +126,17 @@ export const getTagQuestions = async (
   }
 };
 
-export const getTopTags = async () : Promise<ActionResponse<Tag[]>> => {
+export const getTopTags = async (): Promise<ActionResponse<Tag[]>> => {
   try {
-    await dbConnect()
+    await dbConnect();
 
-    const tags = await Tag.find().sort({questions: -1}).limit(5)
+    const tags = await Tag.find().sort({ questions: -1 }).limit(5);
 
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(tags))
-    }
+      data: JSON.parse(JSON.stringify(tags)),
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+};

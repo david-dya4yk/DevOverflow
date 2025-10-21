@@ -1,12 +1,12 @@
-import Account from "@/database/account.module";
-import User from "@/database/user.module";
-import handleError from "@/lib/handlers/error";
-import { ValidationError } from "@/lib/http-error";
-import dbConnect from "@/lib/mongoose";
-import { SignInWithOAuthSchema } from "@/lib/validations";
-import mongoose from "mongoose";
-import { NextResponse } from "next/server";
-import slugify from "slugify";
+import Account from '@/database/account.module';
+import User from '@/database/user.module';
+import handleError from '@/lib/handlers/error';
+import { ValidationError } from '@/lib/http-error';
+import dbConnect from '@/lib/mongoose';
+import { SignInWithOAuthSchema } from '@/lib/validations';
+import mongoose from 'mongoose';
+import { NextResponse } from 'next/server';
+import slugify from 'slugify';
 
 export async function POST(request: Request) {
   const { provider, providerAccountId, user } = await request.json();
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
     }
   } catch (error: unknown) {
     await session.abortTransaction();
-    return handleError(error, "api") as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   } finally {
     session.endSession();
   }

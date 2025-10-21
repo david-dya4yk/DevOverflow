@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { toast } from "@/hooks/use-toast";
-import { createVote } from "@/lib/actions/vote.action";
-import { formatNumber } from "@/lib/utils";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { use, useState } from "react";
+import { toast } from '@/hooks/use-toast';
+import { createVote } from '@/lib/actions/vote.action';
+import { formatNumber } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { use, useState } from 'react';
 
 interface Params {
-  targetType: "question" | "answer";
+  targetType: 'question' | 'answer';
   targetId: string;
   upvotes: number;
   downvotes: number;
@@ -31,11 +31,11 @@ const Votes = ({
 
   const { hasUpvoted, hasDownvoted } = data || {};
 
-  const handleVote = async (voteType: "upvote" | "downvote") => {
+  const handleVote = async (voteType: 'upvote' | 'downvote') => {
     if (!userId)
       return toast({
-        title: "Please login to vote",
-        description: "Only logged-in user can vote",
+        title: 'Please login to vote',
+        description: 'Only logged-in user can vote',
       });
 
     setIsLoading(true);
@@ -45,25 +45,25 @@ const Votes = ({
 
       if (!result.success) {
         return toast({
-          title: "Failed to vote!",
+          title: 'Failed to vote!',
           description:
             result.error?.message ||
-            " An error occured while voting. Please try again later",
-          variant: "destructive",
+            ' An error occured while voting. Please try again later',
+          variant: 'destructive',
         });
       }
 
-      const successMessage = "Vote was successfully";
+      const successMessage = 'Vote was successfully';
 
       toast({
         title: successMessage,
-        description: "Your vote has been processed successfully",
+        description: 'Your vote has been processed successfully',
       });
     } catch {
       toast({
-        title: "Failed to vote",
-        description: "An error occured while voting. Please try again later",
-        variant: "destructive",
+        title: 'Failed to vote',
+        description: 'An error occured while voting. Please try again later',
+        variant: 'destructive',
       });
     } finally {
       setIsLoading(false);
@@ -75,14 +75,14 @@ const Votes = ({
       <div className="flex-center gap-1.5">
         <Image
           src={
-            success && hasUpvoted ? "/icons/upvoted.svg" : "/icons/upvote.svg"
+            success && hasUpvoted ? '/icons/upvoted.svg' : '/icons/upvote.svg'
           }
           width={18}
           height={18}
           alt="upvoted"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`cursor-pointer ${isLoading && 'opacity-50'}`}
           aria-label="upvoted"
-          onClick={() => !isLoading && handleVote("upvote")}
+          onClick={() => !isLoading && handleVote('upvote')}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">
@@ -95,15 +95,15 @@ const Votes = ({
         <Image
           src={
             success && hasDownvoted
-              ? "/icons/downvoted.svg"
-              : "/icons/downvote.svg"
+              ? '/icons/downvoted.svg'
+              : '/icons/downvote.svg'
           }
           width={18}
           height={18}
           alt="downvote"
-          className={`cursor-pointer ${isLoading && "opacity-50"}`}
+          className={`cursor-pointer ${isLoading && 'opacity-50'}`}
           aria-label="downvote"
-          onClick={() => !isLoading && handleVote("downvote")}
+          onClick={() => !isLoading && handleVote('downvote')}
         />
 
         <div className="flex-center background-light700_dark400 min-w-5 rounded-sm p-1">

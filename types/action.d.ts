@@ -1,5 +1,5 @@
 interface SignInWithOAuthParams {
-  provider: "google" | "github";
+  provider: 'google' | 'github';
   providerAccountId: string;
   user: {
     name: string;
@@ -30,7 +30,7 @@ interface GetQuestionParams {
   questionId: string;
 }
 
-interface GetTagQuestionParams extends Omit<PaginatedSearchParams, "filter"> {
+interface GetTagQuestionParams extends Omit<PaginatedSearchParams, 'filter'> {
   tagId: string;
 }
 
@@ -48,15 +48,15 @@ interface GetAnswerParams extends PaginatedSearchParams {
 
 interface CreateVoteParams {
   targetId: string;
-  targetType: "question" | "answer";
-  voteType: "upvote" | "downvote";
+  targetType: 'question' | 'answer';
+  voteType: 'upvote' | 'downvote';
 }
 
 interface UpdateVoteCountParams extends CreateVoteParams {
   change: 1 | -1;
 }
 
-type HasVotedParams = Pick<CreateVoteParams, "targetId" | "targetType">;
+type HasVotedParams = Pick<CreateVoteParams, 'targetId' | 'targetType'>;
 
 interface HasVotedResponse {
   hasUpvoted: boolean;
@@ -71,7 +71,8 @@ interface GetUserParams {
   userId: string;
 }
 
-interface GetUserQuestionsParams extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+interface GetUserQuestionsParams
+  extends Omit<PaginatedSearchParams, 'query' | 'filter' | 'sort'> {
   userId: string;
 }
 
@@ -93,17 +94,17 @@ interface DeleteQuestionParams {
 
 interface CreateInteractionParams {
   action:
-    | "view"
-    | "upvote"
-    | "downvote"
-    | "bookmark"
-    | "post"
-    | "edit"
-    | "delete"
-    | "search";
+    | 'view'
+    | 'upvote'
+    | 'downvote'
+    | 'bookmark'
+    | 'post'
+    | 'edit'
+    | 'delete'
+    | 'search';
   actionId: string;
   authorId: string;
-  actionTarget: "question" | "answer";
+  actionTarget: 'question' | 'answer';
 }
 
 interface UpdateReputationParams {
@@ -128,4 +129,12 @@ interface JobFilterParams {
 interface GlobalSearchParams {
   query: string;
   type: string | null;
+}
+
+interface UpdateUserParams {
+  name?: string;
+  username?: string;
+  email?: string;
+  image?: string;
+  password?: string;
 }

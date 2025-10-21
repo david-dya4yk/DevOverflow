@@ -1,6 +1,6 @@
-import { RequestError } from "../http-error";
-import logger from "../logger";
-import handleError from "./error";
+import { RequestError } from '../http-error';
+import logger from '../logger';
+import handleError from './error';
 
 interface FetchOptions extends RequestInit {
   timeout?: number;
@@ -24,8 +24,8 @@ export async function fetchHandler<T>(
   const id = setTimeout(() => controller.abort(), timeout);
 
   const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   };
 
   const config: RequestInit = {
@@ -45,9 +45,9 @@ export async function fetchHandler<T>(
 
     return response.json();
   } catch (err) {
-    const error = isError(err) ? err : new Error("Unknown error");
+    const error = isError(err) ? err : new Error('Unknown error');
 
-    if (error.name === "AbortError") {
+    if (error.name === 'AbortError') {
       logger.warn(`Request to ${url} time out`);
     } else {
       logger.error(`Error fetching ${url}: ${error.message}`);

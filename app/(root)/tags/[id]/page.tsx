@@ -1,10 +1,10 @@
-import QuestionCard from "@/components/cards/QuestionCard";
-import DataRenderer from "@/components/DataRenderer";
-import LocalSearch from "@/components/search/LocalSearch";
-import ROUTES from "@/constants/routes";
-import { EMPTY_QUESTION } from "@/constants/states";
-import { getTagQuestions } from "@/lib/actions/tag.action";
-import Pagination from "../../../../components/Pagination";
+import QuestionCard from '@/components/cards/QuestionCard';
+import DataRenderer from '@/components/DataRenderer';
+import LocalSearch from '@/components/search/LocalSearch';
+import ROUTES from '@/constants/routes';
+import { EMPTY_QUESTION } from '@/constants/states';
+import { getTagQuestions } from '@/lib/actions/tag.action';
+import Pagination from '../../../../components/Pagination';
 
 const page = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -37,9 +37,9 @@ const page = async ({ params, searchParams }: RouteParams) => {
         error={error}
         data={questions}
         empty={EMPTY_QUESTION}
-        render={(questions) => (
+        render={questions => (
           <div className="mt-10 flex w-full flex-col gap-6">
-            {questions.map((question) => (
+            {questions.map(question => (
               <QuestionCard key={question._id} question={question} />
             ))}
           </div>

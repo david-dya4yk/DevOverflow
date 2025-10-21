@@ -1,4 +1,4 @@
-import qs from "query-string";
+import qs from 'query-string';
 
 interface UrlQueryParams {
   params: string;
@@ -28,7 +28,7 @@ export const removeKeysFromUrlQuery = ({
 }: RemoveUrlQueryParams) => {
   const queryString = qs.parse(params);
 
-  keysToRemove.forEach((key) => {
+  keysToRemove.forEach(key => {
     delete queryString[key];
   });
 

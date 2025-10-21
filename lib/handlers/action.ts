@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import { ZodError, ZodSchema } from "zod";
-import { UnauthorizedError, ValidationError } from "../http-error";
-import { Session } from "next-auth";
-import { auth } from "@/auth";
-import dbConnect from "../mongoose";
+import { ZodError, ZodSchema } from 'zod';
+import { UnauthorizedError, ValidationError } from '../http-error';
+import { Session } from 'next-auth';
+import { auth } from '@/auth';
+import dbConnect from '../mongoose';
 
 type ActionOptions<T> = {
   params?: T;
@@ -26,7 +26,7 @@ async function action<T>({
           error.flatten().fieldErrors as Record<string, string[]>
         );
       } else {
-        throw new Error("Schema validation failed");
+        throw new Error('Schema validation failed');
       }
     }
   }

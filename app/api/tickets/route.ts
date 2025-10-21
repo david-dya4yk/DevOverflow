@@ -1,5 +1,5 @@
-import tickets from "@/app/database";
-import { NextResponse } from "next/server";
+import tickets from '@/app/database';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   return NextResponse.json(tickets);

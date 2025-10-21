@@ -1,9 +1,9 @@
-import Account from "@/database/account.module";
-import handleError from "@/lib/handlers/error";
-import { ForbiddenError } from "@/lib/http-error";
-import dbConnect from "@/lib/mongoose";
-import { AccountSchema } from "@/lib/validations";
-import { NextResponse } from "next/server";
+import Account from '@/database/account.module';
+import handleError from '@/lib/handlers/error';
+import { ForbiddenError } from '@/lib/http-error';
+import dbConnect from '@/lib/mongoose';
+import { AccountSchema } from '@/lib/validations';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -16,7 +16,7 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
-    return handleError(error, "api") as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }
 
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
 
     if (existingAccount)
       throw new ForbiddenError(
-        "An account with the same provider already exists"
+        'An account with the same provider already exists'
       );
 
     const newAccount = await Account.create(validatedData);
@@ -44,6 +44,6 @@ export async function POST(request: Request) {
       { status: 201 }
     );
   } catch (error) {
-    return handleError(error, "api") as APIErrorResponse;
+    return handleError(error, 'api') as APIErrorResponse;
   }
 }

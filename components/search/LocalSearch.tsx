@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Input } from "../ui/input";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { Input } from '../ui/input';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { formUrlQuery, removeKeysFromUrlQuery } from '@/lib/url';
 
 interface Props {
   route: string;
   imgSrc: string;
   placeholder: string;
   otherClasses?: string;
-  iconPosition?: "left" | "right";
+  iconPosition?: 'left' | 'right';
 }
 
 const LocalSearch = ({
@@ -19,12 +19,12 @@ const LocalSearch = ({
   imgSrc,
   placeholder,
   otherClasses,
-  iconPosition = "left",
+  iconPosition = 'left',
 }: Props) => {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const query = searchParams.get("query") || "";
+  const query = searchParams.get('query') || '';
   const [searchQuery, setSearchQuery] = useState(query);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const LocalSearch = ({
       if (searchQuery) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
-          key: "query",
+          key: 'query',
           value: searchQuery,
         });
 
@@ -41,7 +41,7 @@ const LocalSearch = ({
         if (pathname === route) {
           const newUrl = removeKeysFromUrlQuery({
             params: searchParams.toString(),
-            keysToRemove: ["query"],
+            keysToRemove: ['query'],
           });
           router.push(newUrl, { scroll: false });
         }
@@ -54,7 +54,7 @@ const LocalSearch = ({
     <div
       className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded=[10px] px-4z ${otherClasses} `}
     >
-      {iconPosition === "left" && (
+      {iconPosition === 'left' && (
         <Image
           src={imgSrc}
           width={20}
@@ -69,9 +69,9 @@ const LocalSearch = ({
         className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
         placeholder={placeholder}
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={e => setSearchQuery(e.target.value)}
       />
-      {iconPosition === "right" && (
+      {iconPosition === 'right' && (
         <Image
           src={imgSrc}
           width={15}

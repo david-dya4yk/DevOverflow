@@ -1,26 +1,26 @@
-import AllAnswers from "@/components/answers/AllAnswers";
-import TagCard from "@/components/cards/TagCard";
-import Preview from "@/components/editor/Preview";
-import AnswerForm from "@/components/forms/AnswerForm";
-import Metric from "@/components/Metric";
-import UserAvatar from "@/components/UserAvatar";
-import Votes from "@/components/votes/Votes";
-import ROUTES from "@/constants/routes";
-import {getQuestion, incrementViews} from "@/lib/actions/question.action";
-import {hasVoted} from "@/lib/actions/vote.action";
-import {getAnswers} from "@/lib/answer.action";
-import {formatNumber, getTimeStamp} from "@/lib/utils";
-import Link from "next/link";
-import {redirect} from "next/navigation";
-import {after} from "next/server";
-import React, {Suspense} from "react";
-import SaveQuestion from "@/components/questions/SaveQuestion";
-import {hasSavedQuestion} from "@/lib/actions/collection.action";
-import {Metadata} from "next";
+import AllAnswers from '@/components/answers/AllAnswers';
+import TagCard from '@/components/cards/TagCard';
+import Preview from '@/components/editor/Preview';
+import AnswerForm from '@/components/forms/AnswerForm';
+import Metric from '@/components/Metric';
+import UserAvatar from '@/components/UserAvatar';
+import Votes from '@/components/votes/Votes';
+import ROUTES from '@/constants/routes';
+import { getQuestion, incrementViews } from '@/lib/actions/question.action';
+import { hasVoted } from '@/lib/actions/vote.action';
+import { getAnswers } from '@/lib/answer.action';
+import { formatNumber, getTimeStamp } from '@/lib/utils';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { after } from 'next/server';
+import React, { Suspense } from 'react';
+import SaveQuestion from '@/components/questions/SaveQuestion';
+import { hasSavedQuestion } from '@/lib/actions/collection.action';
+import { Metadata } from 'next';
 
 export async function generateMetadata({
-                                         params,
-                                       }: RouteParams): Promise<Metadata> {
+  params,
+}: RouteParams): Promise<Metadata> {
   const { id } = await params;
 
   const { success, data: question } = await getQuestion({ questionId: id });
@@ -29,20 +29,20 @@ export async function generateMetadata({
 
   return {
     title: question.title,
-    description: question.content.slice(0, 100)
+    description: question.content.slice(0, 100),
   };
 }
 
-const QuestionDetails = async ({params, searchParams}: RouteParams) => {
-  const {id} = await params;
-  const {page, pageSize, filter} = await searchParams;
-  const {success, data: question} = await getQuestion({questionId: id});
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
+  const { id } = await params;
+  const { page, pageSize, filter } = await searchParams;
+  const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
-    await incrementViews({questionId: id});
+    await incrementViews({ questionId: id });
   });
 
-  if (!success || !question) return redirect("/404");
+  if (!success || !question) return redirect('/404');
 
   const {
     success: areAnswersLoaded,
@@ -52,19 +52,19 @@ const QuestionDetails = async ({params, searchParams}: RouteParams) => {
     questionId: id,
     page: Number(page) | 1,
     pageSize: Number(pageSize) | 10,
-    filter
+    filter,
   });
 
   const hasVotedPromise = hasVoted({
     targetId: question._id,
-    targetType: "question",
+    targetType: 'question',
   });
 
   const hasSavedQuestionPromise = hasSavedQuestion({
     questionId: question._id,
-  })
+  });
 
-  const {author, createdAt, views, tags, answers, title, content} = question;
+  const { author, createdAt, views, tags, answers, title, content } = question;
 
   return (
     <>
@@ -96,7 +96,10 @@ const QuestionDetails = async ({params, searchParams}: RouteParams) => {
             </Suspense>
 
             <Suspense fallback={<div>Loading...</div>}>
-              <SaveQuestion questionId={question._id} hasSavedQuestionPromise={hasSavedQuestionPromise}/>
+              <SaveQuestion
+                questionId={question._id}
+                hasSavedQuestionPromise={hasSavedQuestionPromise}
+              />
             </Suspense>
           </div>
         </div>
@@ -127,11 +130,11 @@ const QuestionDetails = async ({params, searchParams}: RouteParams) => {
           value={formatNumber(views)}
         />
       </div>
-      <Preview content={content}/>
+      <Preview content={content} />
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
-          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact/>
+          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
       <section className="my-5">

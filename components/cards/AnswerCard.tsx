@@ -1,32 +1,45 @@
-import { hasVoted } from "@/lib/actions/vote.action";
-import {cn, getTimeStamp} from "@/lib/utils";
-import EditDeleteAction from "@/components/user/EditDeleteAction";
-import UserAvatar from "@/components/UserAvatar";
-import Link from "next/link";
-import ROUTES from "@/constants/routes";
-import {Suspense} from "react";
-import Votes from "@/components/votes/Votes";
-import Preview from "@/components/editor/Preview";
+import { hasVoted } from '@/lib/actions/vote.action';
+import { cn, getTimeStamp } from '@/lib/utils';
+import EditDeleteAction from '@/components/user/EditDeleteAction';
+import UserAvatar from '@/components/UserAvatar';
+import Link from 'next/link';
+import ROUTES from '@/constants/routes';
+import { Suspense } from 'react';
+import Votes from '@/components/votes/Votes';
+import Preview from '@/components/editor/Preview';
 
 interface Props extends Answers {
-  containerClasses?: string,
-  showReadMore?: boolean,
-  showActionBtns?: boolean,
+  containerClasses?: string;
+  showReadMore?: boolean;
+  showActionBtns?: boolean;
 }
 
-const AnswerCard = ({ _id, author, content, createdAt, upvotes, downvotes, question, containerClasses, showReadMore = false, showActionBtns= false }: Props) => {
+const AnswerCard = ({
+  _id,
+  author,
+  content,
+  createdAt,
+  upvotes,
+  downvotes,
+  question,
+  containerClasses,
+  showReadMore = false,
+  showActionBtns = false,
+}: Props) => {
   const hasVotedPromise = hasVoted({
     targetId: _id,
-    targetType: 'answer'
+    targetType: 'answer',
   });
 
   return (
-    <article className={cn("light-border border-b py-10 relative", containerClasses)}>
+    <article
+      className={cn('light-border border-b py-10 relative', containerClasses)}
+    >
       <span id={`answer-${_id}`} className="hash-span" />
 
       {showActionBtns && (
-        <div className='background-light800 flex-center absolute -right-2 -top-5 size-9 rounded-full'>
-          <EditDeleteAction type='Answer' itemId={_id} />
+        <div className="background-light800 flex-center absolute -right-2 -top-5 size-9 rounded-full">
+          <EditDeleteAction type="Answer" itemId={_id} />
         </div>
       )}
 
@@ -44,7 +57,7 @@ const AnswerCard = ({ _id, author, content, createdAt, upvotes, downvotes, quest
             className="flex flex-col max-sm:ml-1 sm:flex-row sm:items-center"
           >
             <p className="body-semibold text-dark300_light700">
-              {author.name ?? "Anonymous"}
+              {author.name ?? 'Anonymous'}
             </p>
 
             <p className="small-regular text-light400_light500 ml-0.5 mt-0.5 line-clamp-1">
@@ -56,11 +69,10 @@ const AnswerCard = ({ _id, author, content, createdAt, upvotes, downvotes, quest
 
         <div className="flex justify-end">
           <Suspense fallback={<div>Loading...</div>}>
-
             <Votes
               upvotes={upvotes}
               downvotes={downvotes}
-              targetType='answer'
+              targetType="answer"
               targetId={_id}
               hasVotedPromise={hasVotedPromise}
             />
@@ -71,8 +83,11 @@ const AnswerCard = ({ _id, author, content, createdAt, upvotes, downvotes, quest
       <Preview content={content} />
 
       {showReadMore && (
-        <Link href={`/questions/${question}#answer-${_id}`} className="body-semibold relative z-10 font-space-grotesk text-primary-500">
-          <p className='mt-1'>Read more...</p>
+        <Link
+          href={`/questions/${question}#answer-${_id}`}
+          className="body-semibold relative z-10 font-space-grotesk text-primary-500"
+        >
+          <p className="mt-1">Read more...</p>
         </Link>
       )}
     </article>

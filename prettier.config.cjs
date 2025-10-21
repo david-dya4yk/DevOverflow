@@ -6,5 +6,4 @@ module.exports = {
   printWidth: 80,
   bracketSpacing: true,
   arrowParens: 'avoid',
-  plugins: ['prettier-plugin-tailwindcss'],
 };

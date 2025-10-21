@@ -1,11 +1,11 @@
-import React from "react";
-import NavLinks from "./navbar/NavLinks";
-import Link from "next/link";
-import { Button } from "../ui/button";
-import ROUTES from "@/constants/routes";
-import Image from "next/image";
-import { auth, signOut } from "@/auth";
-import { LogOut } from "lucide-react";
+import React from 'react';
+import NavLinks from './navbar/NavLinks';
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import ROUTES from '@/constants/routes';
+import Image from 'next/image';
+import { auth, signOut } from '@/auth';
+import { LogOut } from 'lucide-react';
 
 const LeftSidebar = async () => {
   const session = await auth();
@@ -20,7 +20,7 @@ const LeftSidebar = async () => {
         {userId ? (
           <form
             action={async () => {
-              "use server";
+              'use server';
 
               await signOut();
             }}

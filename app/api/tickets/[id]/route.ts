@@ -1,5 +1,5 @@
-import tickets from "@/app/database";
-import { NextResponse } from "next/server";
+import tickets from '@/app/database';
+import { NextResponse } from 'next/server';
 
 export async function GET(
   _: Request,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const ticket = tickets.find((ticket) => ticket.id === parseInt(id));
+  const ticket = tickets.find(ticket => ticket.id === parseInt(id));
 
   return NextResponse.json(ticket);
 }
@@ -19,10 +19,10 @@ export async function PUT(
   const { id } = await params;
   const { name, status, type } = await request.json();
 
-  const ticket = tickets.find((ticket) => ticket.id === parseInt(id));
+  const ticket = tickets.find(ticket => ticket.id === parseInt(id));
 
   if (!ticket)
-    return NextResponse.json(new Error("Ticket not found"), { status: 404 });
+    return NextResponse.json(new Error('Ticket not found'), { status: 404 });
 
   if (name) ticket.name = name;
   if (status) ticket.status = status;
@@ -37,10 +37,10 @@ export async function DELETE(
 ) {
   const { id } = await params;
 
-  const ticketIndex = tickets.findIndex((ticket) => ticket.id === parseInt(id));
+  const ticketIndex = tickets.findIndex(ticket => ticket.id === parseInt(id));
 
   if (ticketIndex === -1)
-    return NextResponse.json(new Error("Ticket not found"), { status: 404 });
+    return NextResponse.json(new Error('Ticket not found'), { status: 404 });
 
   tickets.splice(ticketIndex, 1);
   return NextResponse.json(tickets);

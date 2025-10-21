@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
-import { Button } from "@/components/ui/button";
-import { MDXEditorMethods } from "@mdxeditor/editor";
+import { Button } from '@/components/ui/button';
+import { MDXEditorMethods } from '@mdxeditor/editor';
 
 import {
   Form,
@@ -13,19 +13,19 @@ import {
   FormField,
   FormItem,
   FormMessage,
-} from "@/components/ui/form";
-import { useRef, useState, useTransition } from "react";
-import { AnswerSchema } from "@/lib/validations";
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { createAnswer } from "@/lib/answer.action";
-import { toast } from "@/hooks/use-toast";
-import { useSession } from "next-auth/react";
-import { api } from "@/lib/api";
-import { title } from "process";
+} from '@/components/ui/form';
+import { useRef, useState, useTransition } from 'react';
+import { AnswerSchema } from '@/lib/validations';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
+import { ReloadIcon } from '@radix-ui/react-icons';
+import { createAnswer } from '@/lib/answer.action';
+import { toast } from '@/hooks/use-toast';
+import { useSession } from 'next-auth/react';
+import { api } from '@/lib/api';
+import { title } from 'process';
 
-const Editor = dynamic(() => import("@/components/editor/index"), {
+const Editor = dynamic(() => import('@/components/editor/index'), {
   ssr: false,
 });
 
@@ -44,11 +44,11 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
     defaultValues: {
-      content: "",
+      content: '',
     },
   });
 
-  const handleSubmit = form.handleSubmit(async (values) => {
+  const handleSubmit = form.handleSubmit(async values => {
     startAnsweringTransition(async () => {
       const result = await createAnswer({
         questionId,
@@ -58,27 +58,27 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
       if (result.success) {
         form.reset();
         toast({
-          title: "Success",
-          description: "Answer submitted successfully.",
+          title: 'Success',
+          description: 'Answer submitted successfully.',
         });
         if (editorRef.current) {
-          editorRef.current.setMarkdown("");
+          editorRef.current.setMarkdown('');
         }
       } else {
         toast({
           title: `Error ${result.status}`,
           description: result.error?.message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       }
     });
   });
 
   const generateAIAnswers = async () => {
-    if (session.status !== "authenticated") {
+    if (session.status !== 'authenticated') {
       return toast({
-        title: "Please login",
-        description: "You must be logged in to generate AI answers",
+        title: 'Please login',
+        description: 'You must be logged in to generate AI answers',
       });
     }
 
@@ -97,32 +97,32 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
         return toast({
           title: `Error ${error.status}`,
           description: error.message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       }
-      const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
+      const formattedAnswer = data.replace(/<br>/g, ' ').toString().trim();
 
       if (editorRef.current) {
         editorRef.current.setMarkdown(formattedAnswer);
 
-        form.setValue("content", formattedAnswer);
-        form.trigger("content");
+        form.setValue('content', formattedAnswer);
+        form.trigger('content');
       }
 
       toast({
-        title: "Success",
-        description: "AI answer generated successfully.",
+        title: 'Success',
+        description: 'AI answer generated successfully.',
       });
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
-          : "An error occurred while generating AI answers";
+          : 'An error occurred while generating AI answers';
 
       toast({
-        title: "Error",
+        title: 'Error',
         description: message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     } finally {
       setIsAiSubmitting(false);
@@ -153,7 +153,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
                 height={12}
                 alt="Generate AI answer"
                 className="object-contain"
-              />{" "}
+              />{' '}
               Generate AI answer
             </>
           )}
@@ -188,7 +188,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
                   Posting...
                 </>
               ) : (
-                "Post Answer"
+                'Post Answer'
               )}
             </Button>
           </div>

@@ -1,28 +1,28 @@
-import QuestionCard from "@/components/cards/QuestionCard";
-import LocalSearch from "@/components/search/LocalSearch";
-import DataRenderer from "@/components/DataRenderer";
-import {EMPTY_QUESTION} from "@/constants/states";
-import {getSavedQuestions} from "@/lib/actions/collection.action";
-import ROUTES from "@/constants/routes";
-import CommonFilter from "@/components/filters/CommonFilter";
-import {CollectionFilters} from "@/constants/filters";
-import Pagination from "@/components/Pagination";
+import QuestionCard from '@/components/cards/QuestionCard';
+import LocalSearch from '@/components/search/LocalSearch';
+import DataRenderer from '@/components/DataRenderer';
+import { EMPTY_QUESTION } from '@/constants/states';
+import { getSavedQuestions } from '@/lib/actions/collection.action';
+import ROUTES from '@/constants/routes';
+import CommonFilter from '@/components/filters/CommonFilter';
+import { CollectionFilters } from '@/constants/filters';
+import Pagination from '@/components/Pagination';
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
 
-const Collections = async ({searchParams}: SearchParams) => {
-  const {page, pageSize, query, filter} = await searchParams;
+const Collections = async ({ searchParams }: SearchParams) => {
+  const { page, pageSize, query, filter } = await searchParams;
 
-  const {success, data, error} = await getSavedQuestions({
+  const { success, data, error } = await getSavedQuestions({
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 10,
-    query: query || "",
-    filter: filter || "",
+    query: query || '',
+    filter: filter || '',
   });
 
-  const {collection, isNext} = data || {};
+  const { collection, isNext } = data || {};
 
   return (
     <>
@@ -36,7 +36,10 @@ const Collections = async ({searchParams}: SearchParams) => {
           otherClasses="flex-1"
         />
 
-        <CommonFilter filters={CollectionFilters} otherClasses='min-h-[56px] sm:min-w-[170px]' />
+        <CommonFilter
+          filters={CollectionFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+        />
       </div>
 
       <DataRenderer
@@ -44,11 +47,10 @@ const Collections = async ({searchParams}: SearchParams) => {
         error={error}
         data={collection}
         empty={EMPTY_QUESTION}
-        render={(collection) => (
+        render={collection => (
           <div className="mt-10 flex w-full flex-col gap-6">
-            {collection.map((item) => (
-
-              <QuestionCard key={item._id} question={item.question}/>
+            {collection.map(item => (
+              <QuestionCard key={item._id} question={item.question} />
             ))}
           </div>
         )}
