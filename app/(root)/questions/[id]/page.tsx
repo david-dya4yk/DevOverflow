@@ -42,7 +42,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
     await incrementViews({ questionId: id });
   });
 
-  if (!success || !question) return redirect('/404');
+  if (!success || !question) return <div>You must be to sign in user.</div>
 
   const {
     success: areAnswersLoaded,
