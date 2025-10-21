@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 import {
   Sheet,
@@ -6,14 +6,14 @@ import {
   SheetContent,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import Image from "next/image";
-import Link from "next/link";
-import ROUTES from "@/constants/routes";
-import { Button } from "@/components/ui/button";
-import NavLinks from "./NavLinks";
-import { auth, signOut } from "@/auth";
-import { LogOut } from "lucide-react";
+} from '@/components/ui/sheet';
+import Image from 'next/image';
+import Link from 'next/link';
+import ROUTES from '@/constants/routes';
+import { Button } from '@/components/ui/button';
+import NavLinks from './NavLinks';
+import { auth, signOut } from '@/auth';
+import { LogOut } from 'lucide-react';
 
 const MobileNavigation = async () => {
   const session = await auth();
@@ -59,7 +59,7 @@ const MobileNavigation = async () => {
               <SheetClose asChild>
                 <form
                   action={async () => {
-                    "use server";
+                    'use server';
 
                     await signOut();
                   }}

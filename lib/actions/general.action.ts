@@ -1,10 +1,10 @@
-"use server";
+'use server';
 
-import { Answer, Question, Tag, User } from "@/database";
+import { Answer, Question, Tag, User } from '@/database';
 
-import action from "../handlers/action";
-import handleError from "../handlers/error";
-import { GlobalSearchSchema } from "../validations";
+import action from '../handlers/action';
+import handleError from '../handlers/error';
+import { GlobalSearchSchema } from '../validations';
 
 export async function globalSearch(params: GlobalSearchParams) {
   try {
@@ -18,20 +18,20 @@ export async function globalSearch(params: GlobalSearchParams) {
     }
 
     const { query, type } = params;
-    const regexQuery = { $regex: query, $options: "i" };
+    const regexQuery = { $regex: query, $options: 'i' };
 
     let results = [];
 
     const modelsAndTypes = [
-      { model: Question, searchField: "title", type: "question" },
-      { model: User, searchField: "name", type: "user" },
-      { model: Answer, searchField: "content", type: "answer" },
-      { model: Tag, searchField: "name", type: "tag" },
+      { model: Question, searchField: 'title', type: 'question' },
+      { model: User, searchField: 'name', type: 'user' },
+      { model: Answer, searchField: 'content', type: 'answer' },
+      { model: Tag, searchField: 'name', type: 'tag' },
     ];
 
     const typeLower = type?.toLowerCase();
 
-    const SearchableTypes = ["question", "answer", "user", "tag"];
+    const SearchableTypes = ['question', 'answer', 'user', 'tag'];
     if (!typeLower || !SearchableTypes.includes(typeLower)) {
       for (const { model, searchField, type } of modelsAndTypes) {
         const queryResults = await model
@@ -39,34 +39,34 @@ export async function globalSearch(params: GlobalSearchParams) {
           .limit(2);
 
         results.push(
-          ...queryResults.map((item) => ({
+          ...queryResults.map(item => ({
             title:
-              type === "answer"
+              type === 'answer'
                 ? `Answers containing ${query}`
                 : item[searchField],
             type,
-            id: type === "answer" ? item.question : item._id,
+            id: type === 'answer' ? item.question : item._id,
           }))
         );
       }
     } else {
-      const modelInfo = modelsAndTypes.find((item) => item.type === type);
+      const modelInfo = modelsAndTypes.find(item => item.type === type);
 
       if (!modelInfo) {
-        throw new Error("Invalid search type");
+        throw new Error('Invalid search type');
       }
 
       const queryResults = await modelInfo.model
         .find({ [modelInfo.searchField]: regexQuery })
         .limit(8);
 
-      results = queryResults.map((item) => ({
+      results = queryResults.map(item => ({
         title:
-          type === "answer"
+          type === 'answer'
             ? `Answers containing ${query}`
             : item[modelInfo.searchField],
         type,
-        id: type === "answer" ? item.question : item._id,
+        id: type === 'answer' ? item.question : item._id,
       }));
     }
 

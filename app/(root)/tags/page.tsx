@@ -1,12 +1,12 @@
-import TagCard from "@/components/cards/TagCard";
-import DataRenderer from "@/components/DataRenderer";
-import LocalSearch from "@/components/search/LocalSearch";
-import ROUTES from "@/constants/routes";
-import { EMPTY_TAGS } from "@/constants/states";
-import { getTags } from "@/lib/actions/tag.action";
-import CommonFilter from "@/components/filters/CommonFilter";
-import {TagFilters} from "@/constants/filters";
-import Pagination from "@/components/Pagination";
+import TagCard from '@/components/cards/TagCard';
+import DataRenderer from '@/components/DataRenderer';
+import LocalSearch from '@/components/search/LocalSearch';
+import ROUTES from '@/constants/routes';
+import { EMPTY_TAGS } from '@/constants/states';
+import { getTags } from '@/lib/actions/tag.action';
+import CommonFilter from '@/components/filters/CommonFilter';
+import { TagFilters } from '@/constants/filters';
+import Pagination from '@/components/Pagination';
 
 const Tags = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
@@ -30,16 +30,19 @@ const Tags = async ({ searchParams }: RouteParams) => {
           otherClasses="flex-1"
         />
 
-        <CommonFilter filters={TagFilters} otherClasses='min-h-[56px] sm:min-w-[170px]' />
+        <CommonFilter
+          filters={TagFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+        />
       </div>
       <DataRenderer
         success={success}
         error={error}
         empty={EMPTY_TAGS}
         data={tags}
-        render={(tags) => (
+        render={tags => (
           <div className="mt-10 flex w-full flex-wrap gap-4">
-            {tags.map((tag) => (
+            {tags.map(tag => (
               <TagCard key={tag._id} {...tag} />
             ))}
           </div>

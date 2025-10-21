@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useRef, useTransition } from "react";
-import { AskQuestionSchema } from "@/lib/validations";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import React, { useRef, useTransition } from 'react';
+import { AskQuestionSchema } from '@/lib/validations';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { ReloadIcon } from '@radix-ui/react-icons';
 import {
   Form,
   FormControl,
@@ -13,18 +13,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import TagCard from "../cards/TagCard";
-import { z } from "zod";
-import dynamic from "next/dynamic";
-import { MDXEditorMethods } from "@mdxeditor/editor";
-import { createQuestion, editQuestion } from "@/lib/actions/question.action";
-import { useRouter } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
-import ROUTES from "@/constants/routes";
-const Editor = dynamic(() => import("@/components/editor"), {
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import TagCard from '../cards/TagCard';
+import { z } from 'zod';
+import dynamic from 'next/dynamic';
+import { MDXEditorMethods } from '@mdxeditor/editor';
+import { createQuestion, editQuestion } from '@/lib/actions/question.action';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/hooks/use-toast';
+import ROUTES from '@/constants/routes';
+const Editor = dynamic(() => import('@/components/editor'), {
   ssr: false,
 });
 
@@ -39,9 +39,9 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: question?.title || "",
-      content: question?.content || "",
-      tags: question?.tags.map((tag) => tag.name) || [],
+      title: question?.title || '',
+      content: question?.content || '',
+      tags: question?.tags.map(tag => tag.name) || [],
     },
   });
 
@@ -51,36 +51,36 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
   ) => {
     const tagInput = e.currentTarget.value.trim();
 
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       e.preventDefault();
 
       if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
-        form.setValue("tags", [...field.value, tagInput]);
-        e.currentTarget.value = "";
-        form.clearErrors("tags");
+        form.setValue('tags', [...field.value, tagInput]);
+        e.currentTarget.value = '';
+        form.clearErrors('tags');
       } else if (tagInput.length > 15) {
-        form.setError("tags", {
-          type: "manual",
-          message: "Tag should be less than 15 characters",
+        form.setError('tags', {
+          type: 'manual',
+          message: 'Tag should be less than 15 characters',
         });
       }
     } else if (field.value.includes(tagInput)) {
-      form.setError("tags", {
-        type: "manual",
-        message: "Tag already exist",
+      form.setError('tags', {
+        type: 'manual',
+        message: 'Tag already exist',
       });
     }
   };
 
   const handleTagRemove = (tag: string, field: { value: string[] }) => {
-    const newTags = field.value.filter((t) => t !== tag);
+    const newTags = field.value.filter(t => t !== tag);
 
-    form.setValue("tags", newTags);
+    form.setValue('tags', newTags);
 
     if (newTags.length === 0) {
-      form.setError("tags", {
-        type: "manual",
-        message: "Tag are required",
+      form.setError('tags', {
+        type: 'manual',
+        message: 'Tag are required',
       });
     }
   };
@@ -98,17 +98,16 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
 
         if (result.success) {
           toast({
-            title: "Success",
-            description: "Question updated successfully.",
+            title: 'Success',
+            description: 'Question updated successfully.',
           });
 
           if (result.data) router.push(ROUTES.QUESTION(result.data._id));
-
         } else {
           toast({
             title: `Error ${result.status}`,
-            description: result.error?.message || "Something went wrong",
-            variant: "destructive",
+            description: result.error?.message || 'Something went wrong',
+            variant: 'destructive',
           });
         }
 
@@ -118,17 +117,16 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Question created successfully.",
+          title: 'Success',
+          description: 'Question created successfully.',
         });
 
         if (result.data) router.push(ROUTES.QUESTION(result.data?._id));
-
       } else {
         toast({
           title: `Error ${result.status}`,
-          description: result.error?.message || "Something went wrong",
-          variant: "destructive",
+          description: result.error?.message || 'Something went wrong',
+          variant: 'destructive',
         });
       }
     });
@@ -202,7 +200,7 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
                     type="text"
                     className="paragraph-regular background-light700_dark300 light-border-2 
                   text-dark300_light700 no-focus min-h-[56px]  border"
-                    onKeyDown={(e) => handleInputKeyDown(e, field)}
+                    onKeyDown={e => handleInputKeyDown(e, field)}
                   />
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 flex-wrap gap-2.5">
@@ -241,7 +239,7 @@ const QuestionForm = ({ question, isEdit = false }: Props) => {
                 <span>Submitting</span>
               </>
             ) : (
-              <>{isEdit ? "Edit:" : "Ask a Question"}</>
+              <>{isEdit ? 'Edit:' : 'Ask a Question'}</>
             )}
           </Button>
         </div>

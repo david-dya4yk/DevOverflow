@@ -1,18 +1,18 @@
-import JobCard from "@/components/cards/JobCard";
-import JobsFilter from "@/components/filters/JobFilter";
-import Pagination from "@/components/Pagination";
+import JobCard from '@/components/cards/JobCard';
+import JobsFilter from '@/components/filters/JobFilter';
+import Pagination from '@/components/Pagination';
 import {
   fetchCountries,
   fetchJobs,
   fetchLocation,
-} from "@/lib/actions/job.action";
+} from '@/lib/actions/job.action';
 
 const Page = async ({ searchParams }: RouteParams) => {
   const { query, location, page } = await searchParams;
   const userLocation = await fetchLocation();
 
   const jobs = await fetchJobs({
-    query:  `${query ? query : 'Software Engineer'} ${location ?  location : userLocation}`,
+    query: `${query ? query : 'Software Engineer'} ${location ? location : userLocation}`,
     page: page ?? 1,
   });
 

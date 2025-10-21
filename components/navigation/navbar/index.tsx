@@ -1,12 +1,12 @@
-import Theme from "./Theme";
-import Link from "next/link";
-import Image from "next/image";
-import React from "react";
-import MobileNavigation from "./MobileNavigation";
-import { auth } from "@/auth";
-import UserAvatar from "@/components/UserAvatar";
-import ROUTES from "@/constants/routes";
-import GlobalSearch from "@/components/search/GlobalSearch";
+import Theme from './Theme';
+import Link from 'next/link';
+import Image from 'next/image';
+import React from 'react';
+import MobileNavigation from './MobileNavigation';
+import { auth } from '@/auth';
+import UserAvatar from '@/components/UserAvatar';
+import ROUTES from '@/constants/routes';
+import GlobalSearch from '@/components/search/GlobalSearch';
 
 const Navbar = async () => {
   const session = await auth();
@@ -29,7 +29,6 @@ const Navbar = async () => {
       <GlobalSearch />
 
       <div className="flex-between gap-5">
-
         <Theme />
 
         {session?.user?.id && (

@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { ReloadIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
-import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ReloadIcon } from '@radix-ui/react-icons';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { globalSearch } from "@/lib/actions/general.action";
+import { globalSearch } from '@/lib/actions/general.action';
 
-import GlobalFilter from "./filters/GlobalFilter";
+import GlobalFilter from './filters/GlobalFilter';
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
@@ -16,8 +16,8 @@ const GlobalResult = () => {
   const [result, setResult] = useState([]);
   const [isLoading, setLoading] = useState(true);
 
-  const global = searchParams.get("global");
-  const type = searchParams.get("type");
+  const global = searchParams.get('global');
+  const type = searchParams.get('type');
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -45,16 +45,16 @@ const GlobalResult = () => {
 
   const renderLink = (type: string, id: string) => {
     switch (type) {
-      case "question":
+      case 'question':
         return `/questions/${id}`;
-      case "answer":
+      case 'answer':
         return `/questions/${id}`;
-      case "user":
+      case 'user':
         return `/profile/${id}`;
-      case "tag":
+      case 'tag':
         return `/tags/${id}`;
       default:
-        return "/";
+        return '/';
     }
   };
 

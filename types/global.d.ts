@@ -126,6 +126,6 @@ interface Country {
 
 interface GlobalSearchedItem {
   id: string;
-  type: "question" | "answer" | "user" | "tag";
+  type: 'question' | 'answer' | 'user' | 'tag';
   title: string;
 }

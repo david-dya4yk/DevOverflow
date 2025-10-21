@@ -1,42 +1,41 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useRef, useState } from "react";
+import Image from 'next/image';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect, useRef, useState } from 'react';
 
-import { Input } from "@/components/ui/input";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
+import { Input } from '@/components/ui/input';
+import { formUrlQuery, removeKeysFromUrlQuery } from '@/lib/url';
 
-import GlobalResult from "../GlobalResult";
+import GlobalResult from '../GlobalResult';
 
 const GlobalSearch = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const query = searchParams.get("global");
+  const query = searchParams.get('global');
 
-  const [search, setSearch] = useState<string>(query || "");
+  const [search, setSearch] = useState<string>(query || '');
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const searchContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
-
       if (
         searchContainerRef.current &&
         event.target instanceof Node &&
         !searchContainerRef.current.contains(event.target)
       ) {
         setIsOpen(false);
-        setSearch("");
+        setSearch('');
       }
     };
 
-    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener('click', handleOutsideClick);
 
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener('click', handleOutsideClick);
     };
   }, [setIsOpen, setSearch, searchContainerRef]);
 
@@ -45,7 +44,7 @@ const GlobalSearch = () => {
       if (search) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
-          key: "global",
+          key: 'global',
           value: search,
         });
 
@@ -54,7 +53,7 @@ const GlobalSearch = () => {
         if (query) {
           const newUrl = removeKeysFromUrlQuery({
             params: searchParams.toString(),
-            keysToRemove: ["global", "type"],
+            keysToRemove: ['global', 'type'],
           });
 
           router.push(newUrl, { scroll: false });
@@ -83,10 +82,10 @@ const GlobalSearch = () => {
           type="text"
           placeholder="Search anything globally..."
           value={search}
-          onChange={(e) => {
+          onChange={e => {
             setSearch(e.target.value);
             if (!isOpen) setIsOpen(true);
-            if (e.target.value === "" && isOpen) setIsOpen(false);
+            if (e.target.value === '' && isOpen) setIsOpen(false);
           }}
           className="paragraph-regular no-focus placeholder text-dark400_light700 border-none shadow-none outline-none"
         />

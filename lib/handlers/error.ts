@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { ZodError } from "zod";
-import { RequestError, ValidationError } from "../http-error";
-import logger from "../logger";
+import { NextResponse } from 'next/server';
+import { ZodError } from 'zod';
+import { RequestError, ValidationError } from '../http-error';
+import logger from '../logger';
 
-export type ResponseType = "api" | "server";
+export type ResponseType = 'api' | 'server';
 
 const formatResponse = (
   responseType: ResponseType,
@@ -16,15 +16,15 @@ const formatResponse = (
     error: {
       message,
       details: errors,
-    }
+    },
   };
 
-  return responseType === "api"
+  return responseType === 'api'
     ? NextResponse.json(responseContent, { status })
     : { status, ...responseContent };
 };
 
-const handleError = (error: unknown, responseType: ResponseType = "server") => {
+const handleError = (error: unknown, responseType: ResponseType = 'server') => {
   if (error instanceof RequestError) {
     logger.error(
       { err: error },
@@ -61,8 +61,8 @@ const handleError = (error: unknown, responseType: ResponseType = "server") => {
     return formatResponse(responseType, 500, error.message);
   }
 
-  logger.error({ err: error }, "An expected error occurred");
-  return formatResponse(responseType, 500, "An unexpected error occurred");
+  logger.error({ err: error }, 'An expected error occurred');
+  return formatResponse(responseType, 500, 'An unexpected error occurred');
 };
 
 export default handleError;

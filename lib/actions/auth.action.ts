@@ -1,14 +1,14 @@
-"use server";
+'use server';
 
-import mongoose from "mongoose";
-import action from "../handlers/action";
-import handleError from "../handlers/error";
-import { SignInSchema, SignUpSchema } from "../validations";
-import User from "@/database/user.module";
-import bcrypt from "bcryptjs";
-import Account from "@/database/account.module";
-import { signIn } from "@/auth";
-import { NotFoundError } from "../http-error";
+import mongoose from 'mongoose';
+import action from '../handlers/action';
+import handleError from '../handlers/error';
+import { SignInSchema, SignUpSchema } from '../validations';
+import User from '@/database/user.module';
+import bcrypt from 'bcryptjs';
+import Account from '@/database/account.module';
+import { signIn } from '@/auth';
+import { NotFoundError } from '../http-error';
 
 export async function signUpWithCredentials(
   params: AuthCredentials
@@ -23,7 +23,6 @@ export async function signUpWithCredentials(
 
   const session = await mongoose.startSession();
   session.startTransaction();
-
 
   try {
     const existingUser = await User.findOne({ email }).session(session);
@@ -47,7 +46,7 @@ export async function signUpWithCredentials(
         {
           userId: newUser._id,
           name,
-          provider: "credentials",
+          provider: 'credentials',
           providerAccountId: email,
           password: hashedPassword,
         },
@@ -57,7 +56,7 @@ export async function signUpWithCredentials(
 
     await session.commitTransaction();
 
-    await signIn("credentials", { email, password, redirect: false });
+    await signIn('credentials', { email, password, redirect: false });
 
     return { success: true };
   } catch (error) {
@@ -70,7 +69,7 @@ export async function signUpWithCredentials(
 }
 
 export async function signInWithCredentials(
-  params: Pick<AuthCredentials, "email" | "password">
+  params: Pick<AuthCredentials, 'email' | 'password'>
 ): Promise<ActionResponse> {
   const validationResult = await action({ params, schema: SignInSchema });
 
@@ -83,23 +82,23 @@ export async function signInWithCredentials(
   try {
     const existingUser = await User.findOne({ email });
 
-    if (!existingUser) throw new NotFoundError("User");
+    if (!existingUser) throw new NotFoundError('User');
 
     const existingAccount = await Account.findOne({
-      provider: "credentials",
+      provider: 'credentials',
       providerAccountId: email,
     });
 
-    if (!existingAccount) throw new NotFoundError("Account");
+    if (!existingAccount) throw new NotFoundError('Account');
 
     const passwordMatch = await bcrypt.compare(
       password,
       existingAccount.password
     );
 
-    if (!passwordMatch) throw new Error("Password does not match");
+    if (!passwordMatch) throw new Error('Password does not match');
 
-    await signIn("credentials", { email, password, redirect: false });
+    await signIn('credentials', { email, password, redirect: false });
 
     return { success: true };
   } catch (error) {

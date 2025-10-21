@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { processJobTitle } from "@/lib/utils";
+import { processJobTitle } from '@/lib/utils';
 
 interface JobLocationProps {
   job_country?: string;
@@ -10,10 +10,10 @@ interface JobLocationProps {
 }
 
 const JobLocation = ({
-                       job_country,
-                       job_city,
-                       job_state,
-                     }: JobLocationProps) => {
+  job_country,
+  job_city,
+  job_state,
+}: JobLocationProps) => {
   return (
     <div className="background-light800_dark400 flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5">
       <Image
@@ -59,7 +59,7 @@ const JobCard = ({ job }: { job: Job }) => {
       <div className="flex items-center gap-6">
         {employer_logo ? (
           <Link
-            href={employer_website ?? "/jobs"}
+            href={employer_website ?? '/jobs'}
             className="background-light800_dark400 relative size-16 rounded-xl"
           >
             <Image
@@ -127,7 +127,7 @@ const JobCard = ({ job }: { job: Job }) => {
           </div>
 
           <Link
-            href={job_apply_link ?? "/jobs"}
+            href={job_apply_link ?? '/jobs'}
             target="_blank"
             className="flex items-center gap-2"
           >

@@ -1,9 +1,9 @@
-import Link from "next/link";
-import React from "react";
-import { Badge } from "../ui/badge";
-import ROUTES from "@/constants/routes";
-import { cn, getDeviconClassName, getTechDescription } from "@/lib/utils";
-import Image from "next/image";
+import Link from 'next/link';
+import React from 'react';
+import { Badge } from '../ui/badge';
+import ROUTES from '@/constants/routes';
+import { cn, getDeviconClassName, getTechDescription } from '@/lib/utils';
+import Image from 'next/image';
 
 interface Props {
   _id: string;
@@ -75,7 +75,7 @@ const TagCard = ({
           <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5">
             <p className="paragraph-semibold text-dark300_light900">{name}</p>
           </div>
-          <i className={cn(iconClass, "text-2xl")} aria-hidden="true" />
+          <i className={cn(iconClass, 'text-2xl')} aria-hidden="true" />
         </div>
 
         <p className="small-regular text-dark500_light700 mt-5 line-clamp-3 w-full">

@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 
 interface Props {
   imgUrl: string;
@@ -36,7 +36,7 @@ const Metric = ({
         className={`rounded-full object-contain ${imgStyles}`}
       />
       <p className={`${textStyles} flex items-center gap-1`}>
-        {value}{" "}
+        {value}{' '}
         {title ? (
           <span className={cn(`small-regular line-clamp-1`, titleStyles)}>
             {title}

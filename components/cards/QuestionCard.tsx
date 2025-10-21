@@ -1,10 +1,10 @@
-import ROUTES from "@/constants/routes";
-import { getTimeStamp } from "@/lib/utils";
-import Link from "next/link";
-import React from "react";
-import TagCard from "./TagCard";
-import Metric from "../Metric";
-import EditDeleteAction from "@/components/user/EditDeleteAction";
+import ROUTES from '@/constants/routes';
+import { getTimeStamp } from '@/lib/utils';
+import Link from 'next/link';
+import React from 'react';
+import TagCard from './TagCard';
+import Metric from '../Metric';
+import EditDeleteAction from '@/components/user/EditDeleteAction';
 
 interface Props {
   question: Question;
@@ -31,10 +31,10 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
-        {showActionBtns && (<EditDeleteAction type='Question' itemId={_id} />)}
+        {showActionBtns && <EditDeleteAction type="Question" itemId={_id} />}
       </div>
       <div className="mt-3.5 flex w-full flex-wrap gap-2">
-        {tags.map((tag) => (
+        {tags.map(tag => (
           <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
         ))}
       </div>
@@ -77,7 +77,6 @@ const QuestionCard = ({
             href={ROUTES.PROFILE(author._id)}
             textStyles="small-medium text-dark400_light700"
           />
-
         </div>
       </div>
     </div>
