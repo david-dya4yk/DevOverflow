@@ -6,24 +6,24 @@ import Metric from '@/components/Metric';
 import UserAvatar from '@/components/UserAvatar';
 import Votes from '@/components/votes/Votes';
 import ROUTES from '@/constants/routes';
-import { getQuestion, incrementViews } from '@/lib/actions/question.action';
-import { hasVoted } from '@/lib/actions/vote.action';
-import { getAnswers } from '@/lib/answer.action';
-import { formatNumber, getTimeStamp } from '@/lib/utils';
+import {getQuestion, incrementViews} from '@/lib/actions/question.action';
+import {hasVoted} from '@/lib/actions/vote.action';
+import {getAnswers} from '@/lib/answer.action';
+import {formatNumber, getTimeStamp} from '@/lib/utils';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { after } from 'next/server';
-import React, { Suspense } from 'react';
+import {after} from 'next/server';
+import React, {Suspense} from 'react';
 import SaveQuestion from '@/components/questions/SaveQuestion';
-import { hasSavedQuestion } from '@/lib/actions/collection.action';
-import { Metadata } from 'next';
+import {hasSavedQuestion} from '@/lib/actions/collection.action';
+import {Metadata} from 'next';
+import {useSession} from "next-auth/react";
 
 export async function generateMetadata({
-  params,
-}: RouteParams): Promise<Metadata> {
-  const { id } = await params;
+                                         params,
+                                       }: RouteParams): Promise<Metadata> {
+  const {id} = await params;
 
-  const { success, data: question } = await getQuestion({ questionId: id });
+  const {success, data: question} = await getQuestion({questionId: id});
 
   if (!success || !question) return {};
 
@@ -33,16 +33,16 @@ export async function generateMetadata({
   };
 }
 
-const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
-  const { id } = await params;
-  const { page, pageSize, filter } = await searchParams;
-  const { success, data: question } = await getQuestion({ questionId: id });
+const QuestionDetails = async ({params, searchParams}: RouteParams) => {
+  const {id} = await params;
+  const {page, pageSize, filter} = await searchParams;
+  const {success, data: question} = await getQuestion({questionId: id});
 
   after(async () => {
-    await incrementViews({ questionId: id });
+    await incrementViews({questionId: id});
   });
 
-  if (!success || !question) return <div>You must be to sign in user.</div>
+  if (!success || !question) throw new Error('Question not found');
 
   const {
     success: areAnswersLoaded,
@@ -64,10 +64,14 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
     questionId: question._id,
   });
 
-  const { author, createdAt, views, tags, answers, title, content } = question;
+  const {author, createdAt, views, tags, answers, title, content} = question;
 
   return (
     <>
+        <p className="paragraph-semibold text-dark300_light700">
+          To interact you must be a registered user.
+        </p>
+      
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
@@ -130,11 +134,11 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
           value={formatNumber(views)}
         />
       </div>
-      <Preview content={content} />
+      <Preview content={content}/>
 
       <div className="mt-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
-          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact />
+          <TagCard key={tag._id} _id={tag._id} name={tag.name} compact/>
         ))}
       </div>
       <section className="my-5">
